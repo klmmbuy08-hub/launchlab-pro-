@@ -7,7 +7,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <Sidebar />
       <div className="pl-64">
         <Header />
-        <main className="pt-16 p-6">{children}</main>
+        <main className="pt-16 p-6 md:p-8 lg:p-10 max-w-[1600px] mx-auto w-full">{children}</main>
       </div>
     </div>
   )
