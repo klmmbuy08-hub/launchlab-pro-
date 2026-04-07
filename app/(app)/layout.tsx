@@ -1,12 +1,14 @@
-import { Sidebar } from "@/components/layout/sidebar";
+import { Sidebar } from '@/components/layout/sidebar'
+import { Header } from '@/components/layout/header'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen overflow-hidden bg-zinc-50">
+    <div className="min-h-screen bg-black">
       <Sidebar />
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <main className="flex-1 overflow-y-auto">{children}</main>
+      <div className="pl-64">
+        <Header />
+        <main className="pt-16 p-6">{children}</main>
       </div>
     </div>
-  );
+  )
 }
