@@ -1,36 +1,147 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 LaunchOS V2
 
-## Getting Started
+**Business Intelligence Platform for Infoproductors & Coaches**
 
-First, run the development server:
+LaunchOS V2 is an all-in-one platform that consolidates your business data, automates content planning, manages ads with AI, and provides actionable insights—all in one place.
+
+## ✨ Features
+
+- 📊 **Main Dashboard** - Complete business overview at a glance
+- 👥 **Audience Intelligence** - AI-powered follower analysis
+- 📝 **Content Intelligence** - Revenue attribution per post
+- 💰 **Business Metrics** - Cash tracking & projections
+- 📅 **Smart Calendar** - 30-day AI content planning
+- 🎯 **Competitor Analysis** - Deep competitive insights
+- 🤖 **AI Ads Manager** - Automated campaign optimization
+- 📈 **Analytics & Reports** - Professional monthly reports
+
+## 🛠️ Tech Stack
+
+- **Frontend:** Next.js 16+, React, TypeScript, Tailwind CSS v4
+- **Backend:** Next.js API Routes
+- **Database:** Supabase (PostgreSQL)
+- **AI:** Anthropic Claude API
+- **Integrations:** Instagram API, Meta Ads API
+
+## 🚀 Quick Start
 
 ```bash
+# 1. Clone the repository
+git clone <your-repo>
+cd launchos-v2
+
+# 2. Run quick start script
+./scripts/quick-start.sh
+
+# 3. Setup environment variables
+# Edit .env.local with your API keys
+
+# 4. Setup database
+./scripts/setup-database.sh
+
+# 5. Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit: http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📋 Requirements
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Node.js 18+
+- npm 9+
+- Supabase account
+- Anthropic API key
+- Meta Developer account (for ads)
 
-## Learn More
+## 🔑 Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+Copy `.env.example` to `.env.local` and fill in:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Required
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+ANTHROPIC_API_KEY=
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Optional (for full features)
+META_APP_ID=
+META_ACCESS_TOKEN=
+INSTAGRAM_CLIENT_ID=
+```
 
-## Deploy on Vercel
+## 📚 Documentation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [Deployment Guide](DEPLOYMENT_CHECKLIST.md)
+- [Database Schema](supabase/migrations/)
+- [API Documentation](docs/API.md)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🧪 Testing
+
+```bash
+# Type checking
+npm run type-check
+
+# Build test
+npm run build
+
+# Run tests
+npm test
+```
+
+## 📦 Deployment
+
+### Vercel (Recommended)
+
+```bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Deploy
+vercel
+```
+
+Add environment variables in Vercel dashboard.
+
+### Manual Deployment
+
+```bash
+# Build production
+npm run build
+
+# Start production server
+npm start
+```
+
+## 💰 Pricing Tiers
+
+- **Free**: 1 social account, basic features
+- **Pro ($97/mo)**: 3 accounts, AI features, basic ads
+- **Pro Plus ($197/mo)**: Full features, advanced ads
+- **Agency ($397/mo)**: 10 accounts, white-label
+
+## 🤝 Contributing
+
+This is a commercial product. For feature requests or bug reports, please contact support.
+
+## 📄 License
+
+Proprietary - All rights reserved
+
+## 🆘 Support
+
+- Documentation: Check `/docs` folder
+- Issues: Create GitHub issue
+- Email: support@launchos.com
+
+## 🎯 Roadmap
+
+- [ ] Mobile app (iOS/Android)
+- [ ] Google Ads integration
+- [ ] TikTok Ads integration
+- [ ] Email marketing automation
+- [ ] CRM integration
+- [ ] Public API
+
+---
+
+**Built with ❤️ for coaches and infoproductors**
