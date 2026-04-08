@@ -1,20 +1,20 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ContentOverview } from '@/components/content/content-overview'
 import { TopContentList } from '@/components/content/top-content-list'
 import { ContentBreakdown } from '@/components/content/content-breakdown'
 import { AIRecommendations } from '@/components/content/ai-recommendations'
-import { RefreshCw, TrendingUp, TrendingDown, Calendar } from 'lucide-react'
+import { RefreshCw, TrendingUp, TrendingDown, Calendar, Sparkles } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function ContentPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [selectedPeriod, setSelectedPeriod] = useState<'7d' | '30d' | '90d'>('30d')
 
-  // Mock data - En producción vendría de la API
+  // Mock data 
   const contentData = {
     overview: {
       total_posts: 45,
@@ -109,113 +109,139 @@ export default function ContentPage() {
 
   const handleRefresh = async () => {
     setIsLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 1500))
     setIsLoading(false)
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-8 pb-12 w-full animate-in fade-in duration-700 font-sans">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Content Intelligence</h1>
-          <p className="text-neutral-400">
-            See exactly which content generates revenue and leads
+          <h1 className="text-3xl font-bold text-white tracking-tight mb-2">Content Intelligence</h1>
+          <p className="text-[#A1A1AA] text-base max-w-xl">
+            Uncover the real ROI of your content. See exactly which posts generate revenue and drive qualified leads.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Period Selector */}
-          <div className="flex items-center gap-2 p-1 rounded-lg bg-neutral-900 border border-neutral-800">
+          <div className="flex items-center p-1 rounded-lg bg-[#141414] border border-[#27272A]">
             {(['7d', '30d', '90d'] as const).map((period) => (
               <button
                 key={period}
                 onClick={() => setSelectedPeriod(period)}
-                className={`px-4 py-2 rounded text-sm font-medium transition-all ${
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
                   selectedPeriod === period
-                    ? 'bg-blue-500 text-white'
-                    : 'text-neutral-400 hover:text-white'
+                    ? 'bg-[#27272A] text-white shadow-sm'
+                    : 'text-[#A1A1AA] hover:text-white hover:bg-[#1F1F1F]'
                 }`}
               >
-                {period === '7d' ? '7 days' : period === '30d' ? '30 days' : '90 days'}
+                {period === '7d' ? '7 Days' : period === '30d' ? '30 Days' : '90 Days'}
               </button>
             ))}
           </div>
 
           <Button
+            size="sm"
             onClick={handleRefresh}
             disabled={isLoading}
-            className="bg-blue-500 hover:bg-blue-600"
+            className="rounded-lg px-4 h-8 bg-white text-black hover:bg-[#E5E7EB] transition-colors text-xs font-semibold"
           >
-            <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
         </div>
       </div>
 
-      {/* AI Insights Banner */}
-      <Card className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border-green-500/30">
-        <CardContent className="p-6">
-          <div className="flex items-start gap-3">
-            <TrendingUp className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
-            <div className="flex-1">
-              <h3 className="font-semibold text-green-300 mb-2">📊 Key Insights:</h3>
-              <ul className="space-y-1.5 text-sm text-green-200">
-                <li>• Your reels generate $60 revenue per post (vs $8 for static posts)</li>
-                <li>• Educational content brings 4x more qualified leads than promotional</li>
-                <li>• Posts published at 6-8 PM have 45% higher engagement</li>
-                <li>• Your best-performing hook type: "How I..." (avg 8.7% engagement)</li>
-              </ul>
+      {/* AI Insights Banner Custom */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.5 }}
+      >
+        <div className="relative overflow-hidden rounded-xl bg-[#0A0A0A] border border-[#10B981]/20 shadow-sm">
+          {/* Subtle gradient accent line at the top */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#10B981] via-[#3B82F6] to-transparent opacity-50" />
+          
+          <div className="relative p-6 sm:p-8">
+            <div className="flex flex-col sm:flex-row items-start gap-6">
+              <div className="flex-shrink-0 p-3 bg-[#10B981]/10 rounded-lg border border-[#10B981]/20">
+                <Sparkles className="w-5 h-5 text-[#10B981]" />
+              </div>
+              <div className="flex-1 w-full">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-3">
+                  Key Insights Discovered
+                  <span className="px-2 py-0.5 rounded-md bg-[#10B981]/10 text-[#10B981] text-[10px] uppercase tracking-widest font-bold border border-[#10B981]/20">New</span>
+                </h3>
+                <div className="grid sm:grid-cols-2 gap-x-8 gap-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#10B981] mt-2 flex-shrink-0" />
+                    <p className="text-sm text-[#A1A1AA]">Your reels generate <strong className="text-white font-medium">$60 revenue</strong> per post (vs $8 static)</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#10B981] mt-2 flex-shrink-0" />
+                    <p className="text-sm text-[#A1A1AA]">Posts published at <strong className="text-white font-medium">6-8 PM</strong> have 45% higher engagement</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#10B981] mt-2 flex-shrink-0" />
+                    <p className="text-sm text-[#A1A1AA]">Educational content brings <strong className="text-white font-medium">4x more</strong> qualified leads</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#10B981] mt-2 flex-shrink-0" />
+                    <p className="text-sm text-[#A1A1AA]">Best-performing hook type: <strong className="text-white font-medium">"How I..."</strong> (avg 8.7%)</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </motion.div>
 
       {/* Overview Metrics */}
       <ContentOverview data={contentData.overview} />
 
-      {/* Top vs Worst Content */}
+      {/* Main Content Areas */}
       <Tabs defaultValue="top" className="space-y-6">
-        <TabsList className="bg-neutral-900 border border-neutral-800">
-          <TabsTrigger value="top" className="data-[state=active]:bg-green-500/20">
-            <TrendingUp className="w-4 h-4 mr-2" />
+        <TabsList className="bg-[#141414] border border-[#27272A] p-1 rounded-lg h-10">
+          <TabsTrigger value="top" className="rounded-md px-4 py-1.5 text-xs font-semibold data-[state=active]:bg-[#27272A] data-[state=active]:text-white text-[#71717A] transition-all">
+            <TrendingUp className="w-3.5 h-3.5 mr-2" />
             Top Performers
           </TabsTrigger>
-          <TabsTrigger value="worst" className="data-[state=active]:bg-red-500/20">
-            <TrendingDown className="w-4 h-4 mr-2" />
+          <TabsTrigger value="worst" className="rounded-md px-4 py-1.5 text-xs font-semibold data-[state=active]:bg-[#27272A] data-[state=active]:text-white text-[#71717A] transition-all">
+            <TrendingDown className="w-3.5 h-3.5 mr-2" />
             Lowest Performers
           </TabsTrigger>
-          <TabsTrigger value="breakdown">
-            <Calendar className="w-4 h-4 mr-2" />
-            Content Breakdown
+          <TabsTrigger value="breakdown" className="rounded-md px-4 py-1.5 text-xs font-semibold data-[state=active]:bg-[#27272A] data-[state=active]:text-white text-[#71717A] transition-all">
+            <Calendar className="w-3.5 h-3.5 mr-2" />
+            Breakdown
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="top" className="space-y-6">
-          <TopContentList
-            content={contentData.top_content}
-            title="Top Content This Month"
-          />
-        </TabsContent>
+        <AnimatePresence mode="wait">
+          <TabsContent value="top" className="mt-0">
+            <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.2 }}>
+              <TopContentList content={contentData.top_content} title="Top Content This Month" />
+            </motion.div>
+          </TabsContent>
 
-        <TabsContent value="worst" className="space-y-6">
-          <TopContentList
-            content={contentData.worst_content}
-            title="Lowest Performing Content"
-            emptyMessage="Great! No underperforming content this month."
-          />
-          <Card className="bg-blue-500/10 border-blue-500/30">
-            <CardContent className="p-4">
-              <p className="text-sm text-blue-200">
-                💡 <strong>Tip:</strong> Analyze why these posts didn't perform and avoid similar content in the future.
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
+          <TabsContent value="worst" className="mt-0 space-y-4">
+            <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.2 }}>
+              <TopContentList content={contentData.worst_content} title="Lowest Performing Content" emptyMessage="Great! No underperforming content this month." />
+              <div className="bg-[#3B82F6]/5 border border-[#3B82F6]/20 py-3 px-4 rounded-lg mt-4 flex items-start gap-3">
+                <span className="text-xl">💡</span>
+                <p className="text-[#A1A1AA] text-sm">
+                  <strong className="text-[#3B82F6] font-medium mr-1">Pro-Tip:</strong> Analyze why these posts didn't perform and avoid similar content in the future.
+                </p>
+              </div>
+            </motion.div>
+          </TabsContent>
 
-        <TabsContent value="breakdown" className="space-y-6">
-          <ContentBreakdown data={contentData.breakdown} />
-        </TabsContent>
+          <TabsContent value="breakdown" className="mt-0">
+            <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.2 }}>
+              <ContentBreakdown data={contentData.breakdown} />
+            </motion.div>
+          </TabsContent>
+        </AnimatePresence>
       </Tabs>
 
       {/* AI Recommendations */}

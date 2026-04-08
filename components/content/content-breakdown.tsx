@@ -1,7 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { PieChart } from 'lucide-react'
+import { PieChart, Activity } from 'lucide-react'
 
 interface ContentBreakdownProps {
   data: {
@@ -12,77 +11,79 @@ interface ContentBreakdownProps {
 
 export function ContentBreakdown({ data }: ContentBreakdownProps) {
   const typeColors: Record<string, string> = {
-    reel: 'from-purple-500 to-purple-600',
-    carousel: 'from-green-500 to-green-600',
-    post: 'from-blue-500 to-blue-600',
-    story: 'from-orange-500 to-orange-600',
+    reel: 'from-[#8B5CF6] to-[#A78BFA]',
+    carousel: 'from-[#10B981] to-[#34D399]',
+    post: 'from-[#3B82F6] to-[#60A5FA]',
+    story: 'from-[#F59E0B] to-[#FBBF24]',
   }
 
   const categoryColors: Record<string, string> = {
-    educational: 'from-blue-500 to-blue-600',
-    promotional: 'from-red-500 to-red-600',
-    transformation: 'from-green-500 to-green-600',
-    engagement: 'from-purple-500 to-purple-600',
-    behind_the_scenes: 'from-orange-500 to-orange-600',
+    educational: 'from-[#3B82F6] to-[#60A5FA]',
+    promotional: 'from-[#F43F5E] to-[#FB7185]',
+    transformation: 'from-[#10B981] to-[#34D399]',
+    engagement: 'from-[#8B5CF6] to-[#A78BFA]',
+    behind_the_scenes: 'from-[#F59E0B] to-[#FBBF24]',
   }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* By Type */}
-      <Card className="bg-neutral-900/50 border-neutral-800">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <PieChart className="w-5 h-5 text-blue-400" />
+      <div className="bg-[#141414] border border-[#27272A] rounded-xl overflow-hidden shadow-sm">
+        <div className="p-5 border-b border-[#27272A] bg-gradient-to-b from-white/[0.02] to-transparent">
+          <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+            <PieChart className="w-4 h-4 text-[#3B82F6]" />
             Content by Type
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
+          </h3>
+        </div>
+        
+        <div className="p-6 space-y-4">
           {data.by_type.map((item) => (
             <div key={item.type}>
-              <div className="flex items-center justify-between text-sm mb-1">
-                <span className="text-neutral-300 capitalize">{item.type}</span>
+              <div className="flex items-center justify-between text-xs mb-2">
+                <span className="text-[#A1A1AA] uppercase tracking-wider font-semibold">{item.type}</span>
                 <span className="font-semibold text-white">
-                  {item.count} ({item.percentage}%)
+                  {item.count} <span className="text-[#71717A] font-normal">({item.percentage}%)</span>
                 </span>
               </div>
-              <div className="h-2 bg-neutral-800 rounded-full overflow-hidden">
+              <div className="h-1.5 bg-[#27272A] rounded-full overflow-hidden shadow-inner">
                 <div
-                  className={`h-full bg-gradient-to-r ${typeColors[item.type] || 'from-neutral-500 to-neutral-600'}`}
+                  className={`h-full bg-gradient-to-r ${typeColors[item.type] || 'from-[#4B5563] to-[#6B7280]'}`}
                   style={{ width: `${item.percentage}%` }}
                 />
               </div>
             </div>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* By Category */}
-      <Card className="bg-neutral-900/50 border-neutral-800">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <PieChart className="w-5 h-5 text-green-400" />
+      <div className="bg-[#141414] border border-[#27272A] rounded-xl overflow-hidden shadow-sm">
+        <div className="p-5 border-b border-[#27272A] bg-gradient-to-b from-white/[0.02] to-transparent">
+          <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+            <Activity className="w-4 h-4 text-[#10B981]" />
             Content by Category
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
+          </h3>
+        </div>
+        
+        <div className="p-6 space-y-4">
           {data.by_category.map((item) => (
             <div key={item.category}>
-              <div className="flex items-center justify-between text-sm mb-1">
-                <span className="text-neutral-300 capitalize">{item.category.replace('_', ' ')}</span>
+              <div className="flex items-center justify-between text-xs mb-2">
+                <span className="text-[#A1A1AA] uppercase tracking-wider font-semibold">{item.category.replace('_', ' ')}</span>
                 <span className="font-semibold text-white">
-                  {item.count} ({item.percentage}%)
+                  {item.count} <span className="text-[#71717A] font-normal">({item.percentage}%)</span>
                 </span>
               </div>
-              <div className="h-2 bg-neutral-800 rounded-full overflow-hidden">
+              <div className="h-1.5 bg-[#27272A] rounded-full overflow-hidden shadow-inner">
                 <div
-                  className={`h-full bg-gradient-to-r ${categoryColors[item.category] || 'from-neutral-500 to-neutral-600'}`}
+                  className={`h-full bg-gradient-to-r ${categoryColors[item.category] || 'from-[#4B5563] to-[#6B7280]'}`}
                   style={{ width: `${item.percentage}%` }}
                 />
               </div>
             </div>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }
