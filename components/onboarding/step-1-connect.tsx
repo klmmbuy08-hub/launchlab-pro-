@@ -1,118 +1,80 @@
 'use client'
 
-import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Camera, Network, Music } from 'lucide-react'
-import { OnboardingData } from '@/lib/types/v2/onboarding'
+import { Share2, Video, Send, Globe } from 'lucide-react'
 
-interface Step1ConnectProps {
-  data: OnboardingData
-  updateData: (data: Partial<OnboardingData>) => void
+interface StepProps {
+  data: any
+  updateData: (data: any) => void
 }
 
-const platforms = [
-  {
-    id: 'instagram',
-    name: 'Instagram',
-    icon: Camera,
-    color: 'from-pink-500 to-purple-500',
-    description: 'Connect your Instagram Business or Creator account',
-  },
-  {
-    id: 'tiktok',
-    name: 'TikTok',
-    icon: Music,
-    color: 'from-black to-pink-500',
-    description: 'Connect your TikTok Business account',
-  },
-  {
-    id: 'linkedin',
-    name: 'LinkedIn',
-    icon: Network,
-    color: 'from-blue-600 to-blue-400',
-    description: 'Connect your LinkedIn profile or page',
-  },
-]
-
-export function Step1Connect({ data, updateData }: Step1ConnectProps) {
-  const [selectedPlatform, setSelectedPlatform] = useState<string | undefined>(data.platform)
-
-  const handleConnect = async (platformId: string) => {
-    setSelectedPlatform(platformId)
-    updateData({ platform: platformId as any })
-
-    // TODO: Implement OAuth flow
-    // For now, simulate connection
-    console.log('Connecting to:', platformId)
-  }
-
+export function Step1Connect({ data, updateData }: StepProps) {
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="space-y-6">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-white mb-3">Connect Your Platform</h2>
-        <p className="text-neutral-400">
-          Choose the platform you want to analyze and optimize
+        <h2 className="text-2xl font-bold text-white mb-2">Connect Your Powerhouse</h2>
+        <p className="text-neutral-400">Sync your social accounts to let our AI analyze your audience.</p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4">
+        <Button
+          variant={data.platform === 'instagram' ? 'default' : 'outline'}
+          className={`h-16 justify-between px-6 ${
+            data.platform === 'instagram' ? 'bg-gradient-to-r from-pink-600 to-purple-600 border-0' : 'border-neutral-800'
+          }`}
+          onClick={() => updateData({ platform: 'instagram' })}
+        >
+          <div className="flex items-center gap-4">
+            <div className="p-2 bg-white/10 rounded-lg">
+              <Share2 className="w-6 h-6" />
+            </div>
+            <div className="text-left">
+              <p className="font-bold">Instagram Business</p>
+              <p className="text-xs opacity-70">Sync followers, reels & posts</p>
+            </div>
+          </div>
+          {data.platform === 'instagram' && <div className="w-2 h-2 bg-white rounded-full" />}
+        </Button>
+
+        <Button
+          variant="outline"
+          className="h-16 justify-between px-6 border-neutral-800 opacity-50 cursor-not-allowed"
+          disabled
+        >
+          <div className="flex items-center gap-4">
+            <div className="p-2 bg-white/10 rounded-lg">
+              <Video className="w-6 h-6" />
+            </div>
+            <div className="text-left">
+              <p className="font-bold">YouTube (Coming Soon)</p>
+              <p className="text-xs opacity-70">Analyze shorts & subscribers</p>
+            </div>
+          </div>
+        </Button>
+
+        <Button
+          variant="outline"
+          className="h-16 justify-between px-6 border-neutral-800 opacity-50 cursor-not-allowed"
+          disabled
+        >
+          <div className="flex items-center gap-4">
+            <div className="p-2 bg-white/10 rounded-lg">
+              <Send className="w-6 h-6" />
+            </div>
+            <div className="text-left">
+              <p className="font-bold">Facebook Ads</p>
+              <p className="text-xs opacity-70">Requires account permission</p>
+            </div>
+          </div>
+        </Button>
+      </div>
+
+      <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg flex gap-3 mt-8">
+        <Globe className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+        <p className="text-xs text-blue-100 leading-relaxed">
+          LaunchOS uses officially verified APIs from Meta and Google to ensure your data security and platform integrity.
         </p>
       </div>
-
-      <div className="grid md:grid-cols-3 gap-6">
-        {platforms.map((platform) => {
-          const Icon = platform.icon
-          const isSelected = selectedPlatform === platform.id
-
-          return (
-            <Card
-              key={platform.id}
-              className={`cursor-pointer transition-all ${
-                isSelected
-                  ? 'border-blue-500 bg-blue-500/10 ring-2 ring-blue-500/20'
-                  : 'border-neutral-800 bg-neutral-900/50 hover:border-neutral-700'
-              }`}
-              onClick={() => handleConnect(platform.id)}
-            >
-              <CardHeader>
-                <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${platform.color} flex items-center justify-center mb-4`}>
-                  <Icon className="w-8 h-8 text-white" />
-                </div>
-                <CardTitle className="text-xl">{platform.name}</CardTitle>
-                <CardDescription>{platform.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button
-                  className={`w-full ${
-                    isSelected
-                      ? 'bg-blue-500 hover:bg-blue-600'
-                      : 'bg-neutral-800 hover:bg-neutral-700'
-                  }`}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleConnect(platform.id)
-                  }}
-                >
-                  {isSelected ? '✓ Connected' : 'Connect'}
-                </Button>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
-
-      {selectedPlatform && (
-        <Card className="mt-8 bg-blue-500/10 border-blue-500/30">
-          <CardContent className="p-6">
-            <div className="flex items-start gap-3">
-              <div className="text-2xl">✨</div>
-              <div>
-                <h3 className="font-semibold text-blue-300 mb-1">Great choice!</h3>
-                <p className="text-sm text-blue-200">
-                  We'll analyze your {selectedPlatform} content, identify your ideal follower, and show you what's generating real revenue.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   )
 }

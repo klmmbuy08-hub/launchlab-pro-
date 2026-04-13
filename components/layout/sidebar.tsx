@@ -1,8 +1,10 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/lib/contexts/auth-context'
+import { getInitials } from '@/lib/utils'
 import {
   LayoutDashboard,
   Users,
@@ -10,84 +12,111 @@ import {
   DollarSign,
   Calendar,
   Target,
+  Sparkles,
   Megaphone,
   BarChart3,
   Settings,
   LogOut,
-  Sparkles
+  Zap,
+  Plug,
+  Contact,
 } from 'lucide-react'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Audience', href: '/audience', icon: Users },
-  { name: 'Content', href: '/content', icon: FileText },
-  { name: 'Stories & Angles', href: '/stories', icon: Sparkles },
-  { name: 'Business', href: '/business', icon: DollarSign },
-  { name: 'Calendar', href: '/calendar', icon: Calendar },
-  { name: 'Competitors', href: '/competitors', icon: Target },
-  { name: 'Ads Manager', href: '/ads', icon: Megaphone },
+  { name: 'Audiencia', href: '/audience', icon: Users },
+  { name: 'Contenido', href: '/content', icon: FileText },
+  { name: 'Leads', href: '/leads', icon: Contact },
+  { name: 'Workflows', href: '/workflows', icon: Zap },
+  { name: 'Negocio', href: '/business', icon: DollarSign },
+  { name: 'Calendario', href: '/calendar', icon: Calendar },
+  { name: 'Competencia', href: '/competitors', icon: Target },
+  { name: 'Historias IA', href: '/stories', icon: Sparkles },
+  { name: 'Anuncios', href: '/ads', icon: Megaphone },
   { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+  { name: 'Integraciones', href: '/integrations', icon: Plug },
 ]
 
 export function Sidebar() {
   const pathname = usePathname()
+  const { user, signOut } = useAuth()
 
   return (
-    <div className="flex h-screen w-64 flex-col bg-[#0A0A0A] border-r border-[#27272A] font-sans">
-      {/* Logo */}
-      <div className="flex h-16 items-center px-6 border-b border-[#27272A]">
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.2)]">
-            <span className="text-black font-bold text-xl leading-none -mt-0.5 tracking-tighter">L</span>
+    <div className="flex flex-col w-64 bg-neutral-900 border-r border-neutral-800 h-screen">
+      <div className="flex items-center h-16 px-6 border-b border-neutral-800">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-white" />
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-white">
-            Launch<span className="text-[#A1A1AA]">OS</span>
-          </h1>
-        </Link>
+          <span className="text-xl font-bold text-white">LAUNCHOS</span>
+        </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 space-y-1.5 px-4 py-6 overflow-y-auto hidden-scrollbar">
+      <div className="px-4 pt-4 pb-2">
+        <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+          Centro de Mando
+        </span>
+      </div>
+
+      <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
         {navigation.map((item) => {
+          const isActive = pathname === item.href
           const Icon = item.icon
-          const isActive = pathname === item.href // Strict equal check to avoid highlighting multiple items
 
           return (
             <Link
               key={item.name}
               href={item.href}
               className={cn(
-                'group flex items-center px-3 py-2.5 text-sm font-semibold rounded-lg transition-all',
+                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
                 isActive
-                  ? 'bg-[#141414] text-white shadow-sm border border-[#27272A]'
-                  : 'text-[#A1A1AA] hover:text-white hover:bg-[#141414]/50 border border-transparent'
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
+                  : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
               )}
             >
-              <Icon className={cn(
-                'mr-3 h-[18px] w-[18px] flex-shrink-0 transition-colors',
-                isActive ? 'text-[#3B82F6]' : 'text-[#71717A] group-hover:text-[#A1A1AA]'
-              )} />
-              {item.name}
+              <Icon className="w-5 h-5 flex-shrink-0" />
+              <span>{item.name}</span>
             </Link>
           )
         })}
       </nav>
 
-      {/* Bottom section */}
-      <div className="border-t border-[#27272A] p-4 space-y-1.5 bg-[#0A0A0A]">
+      <div className="px-3 py-2 border-t border-neutral-800">
         <Link
           href="/settings"
-          className="group flex items-center px-3 py-2.5 text-sm font-semibold text-[#A1A1AA] hover:text-white hover:bg-[#141414]/50 rounded-lg transition-all border border-transparent"
+          className={cn(
+            'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+            pathname === '/settings'
+              ? 'bg-blue-600 text-white'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
+          )}
         >
-          <Settings className="mr-3 h-[18px] w-[18px] flex-shrink-0 text-[#71717A] group-hover:text-[#A1A1AA] transition-colors" />
-          Settings
+          <Settings className="w-5 h-5" />
+          <span>Configuración</span>
         </Link>
-        <button
-          className="group w-full flex items-center px-3 py-2.5 text-sm font-semibold text-[#A1A1AA] hover:text-white hover:bg-[#141414]/50 rounded-lg transition-all border border-transparent"
-        >
-          <LogOut className="mr-3 h-[18px] w-[18px] flex-shrink-0 text-[#71717A] group-hover:text-[#A1A1AA] transition-colors" />
-          Logout
-        </button>
+      </div>
+
+      <div className="p-4 border-t border-neutral-800">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full text-sm font-bold text-white">
+            {user ? getInitials(user.fullName || user.email) : 'DU'}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-white truncate">
+              {user?.fullName || 'Usuario Demo'}
+            </p>
+            <p className="text-xs text-blue-400 font-medium">
+              OPERADOR PRO
+            </p>
+          </div>
+          <button
+            onClick={signOut}
+            className="p-2 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors"
+            title="Cerrar sesión"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   )

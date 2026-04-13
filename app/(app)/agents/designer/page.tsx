@@ -1,4 +1,5 @@
 'use client'
+export const dynamic = 'force-dynamic'
 
 import { AgentPageTemplate } from '@/components/agents/agent-page-template'
 

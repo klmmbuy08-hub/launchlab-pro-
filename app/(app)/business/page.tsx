@@ -1,86 +1,74 @@
 'use client'
 
-import { useState } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
+import { useState, useEffect } from 'react'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { RevenueOverview } from '@/components/business/revenue-overview'
-import { PipelineFunnel } from '@/components/business/pipeline-funnel'
-import { RevenueSources } from '@/components/business/revenue-sources'
-import { GoalsTracker } from '@/components/business/goals-tracker'
-import { ActionPlan } from '@/components/business/action-plan'
-import { RefreshCw, Download, TrendingUp } from 'lucide-react'
+import { formatCurrency, formatNumber, formatPercentage } from '@/lib/utils'
+import {
+  DollarSign,
+  TrendingUp,
+  Target,
+  BarChart3,
+  PieChart,
+  ArrowUpRight,
+  ArrowDownRight,
+  Activity,
+  Megaphone,
+  Filter,
+} from 'lucide-react'
+
+interface BusinessStats {
+  revenue: {
+    total: number
+    growth: number
+    by_source: {
+      organic: number
+      paid: number
+      referral: number
+    }
+  }
+  funnel: {
+    leads: number
+    qualified_leads: number
+    conversions: number
+    conversion_rate: number
+  }
+  ads: {
+    spend: number
+    roas: number
+    cpa: number
+    active_campaigns: number
+  }
+}
 
 export default function BusinessPage() {
-  const [isLoading, setIsLoading] = useState(false)
+  const [stats, setStats] = useState<BusinessStats | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  // Mock data - En producción vendría de la API
-  const businessData = {
-    revenue: {
-      cash_collected: 8450,
-      revenue_growth: 23.5,
-      revenue_forecast: 12800,
-      monthly_goal: 15000,
-      on_track: false,
-    },
-    pipeline: {
-      total_leads: 347,
-      in_conversation: 142,
-      converted: 29,
-      conversion_rate: 8.4,
-    },
-    sources: {
-      organic: 6200,
-      paid_ads: 1800,
-      referrals: 450,
-      other: 0,
-    },
-    goals: {
-      monthly_revenue: 15000,
-      monthly_leads: 400,
-      conversion_rate: 10,
-    },
-    current: {
-      revenue: 8450,
-      leads: 347,
-      conversions: 29,
-    },
-    action_plan: [
-      {
-        priority: 'critical' as const,
-        title: 'Increase lead generation by 15%',
-        description:
-          'You need 53 more leads this month to hit your goal. Focus on high-performing content (reels + carousels).',
-        expected_impact: '+$2,200 revenue',
-        action_label: 'Generate Content Ideas',
-      },
-      {
-        priority: 'high' as const,
-        title: 'Improve conversion rate to 10%',
-        description:
-          'Your current 8.4% is below your goal. Better qualify leads and improve follow-up speed.',
-        expected_impact: '+6 conversions (+$3,600)',
-        action_label: 'View Sales Scripts',
-      },
-      {
-        priority: 'medium' as const,
-        title: 'Re-engage 15 inactive leads',
-        description:
-          'You have 15 qualified leads who went cold. A re-engagement campaign could recover $1,500-2,000.',
-        expected_impact: '+$1,800 revenue',
-        action_label: 'Create Re-engagement Campaign',
-      },
-    ],
+  useEffect(() => {
+    fetchBusinessStats()
+  }, [])
+
+  const fetchBusinessStats = async () => {
+    try {
+      const response = await fetch('/api/business/stats')
+      const data = await response.json()
+      if (data.success) {
+        setStats(data.data)
+      }
+    } catch (error) {
+      console.error('Error fetching business stats:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleRefresh = async () => {
-    setIsLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    setIsLoading(false)
-  }
-
-  const handleUpdateGoals = (newGoals: any) => {
-    console.log('Updating goals:', newGoals)
-    // TODO: Call API to update goals
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[600px]">
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
   }
 
   return (
@@ -88,104 +76,250 @@ export default function BusinessPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Business Dashboard</h1>
-          <p className="text-neutral-400">
-            Complete overview of your business metrics and financial health
+          <h1 className="text-3xl font-bold text-white">Business Intelligence</h1>
+          <p className="text-[#6B7280] mt-1">
+            Analyzing your revenue, funnel performance, and ROI
           </p>
         </div>
-
-        <div className="flex items-center gap-3">
-          <Button variant="outline" className="border-neutral-700">
-            <Download className="w-4 h-4 mr-2" />
-            Export Report
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm">
+            <Filter className="w-4 h-4 mr-2" />
+            Jan 1 - Jan 31
           </Button>
-          <Button
-            onClick={handleRefresh}
-            disabled={isLoading}
-            className="bg-blue-500 hover:bg-blue-600"
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh
+          <Button variant="outline" size="sm">
+            Download Report
           </Button>
         </div>
       </div>
 
-      {/* AI Insights Banner */}
-      <Card className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 border-purple-500/30">
-        <CardContent className="p-6">
-          <div className="flex items-start gap-3">
-            <TrendingUp className="w-6 h-6 text-purple-400 flex-shrink-0 mt-1" />
-            <div className="flex-1">
-              <h3 className="font-semibold text-purple-300 mb-2">💰 Financial Snapshot:</h3>
-              <div className="grid md:grid-cols-2 gap-4 text-sm text-purple-200">
-                <div>
-                  <p>
-                    • You're <strong>$6,550 behind</strong> your monthly goal with{' '}
-                    <strong>15 days</strong> remaining
-                  </p>
-                  <p>
-                    • At current pace, you'll end the month at <strong>$12,800</strong> (85% of
-                    goal)
-                  </p>
+      {/* Primary Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Total Revenue */}
+        <Card className="bg-[#171717] border-[#262626]">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-[#6B7280]">
+              Total Revenue
+            </CardTitle>
+            <div className="p-2 bg-blue-500/10 rounded-lg">
+              <DollarSign className="w-4 h-4 text-blue-400" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-white">
+              {formatCurrency(stats?.revenue.total || 0)}
+            </div>
+            <div className="flex items-center gap-1 mt-2 text-green-400 text-sm">
+              <ArrowUpRight className="w-4 h-4" />
+              <span>{formatPercentage(stats?.revenue.growth || 0)} from last month</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Avg CPA */}
+        <Card className="bg-[#171717] border-[#262626]">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-[#6B7280]">
+              Avg. CPA
+            </CardTitle>
+            <div className="p-2 bg-purple-500/10 rounded-lg">
+              <Target className="w-4 h-4 text-purple-400" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-white">
+              {formatCurrency(stats?.ads.cpa || 0)}
+            </div>
+            <div className="flex items-center gap-1 mt-2 text-green-400 text-sm">
+              <ArrowDownRight className="w-4 h-4" />
+              <span>12.4% improved</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* ROAS */}
+        <Card className="bg-[#171717] border-[#262626]">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-[#6B7280]">
+              Ad ROAS
+            </CardTitle>
+            <div className="p-2 bg-green-500/10 rounded-lg">
+              <TrendingUp className="w-4 h-4 text-green-400" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-white">
+              {stats?.ads.roas.toFixed(2)}x
+            </div>
+            <div className="flex items-center gap-1 mt-2 text-green-400 text-sm">
+              <ArrowUpRight className="w-4 h-4" />
+              <span>0.4x increase</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Sales Funnel */}
+        <Card className="bg-[#171717] border-[#262626]">
+          <CardHeader>
+            <CardTitle className="text-white">Sales Funnel</CardTitle>
+            <CardDescription>Conversion efficiency from lead to sale</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {/* Leads */}
+              <div>
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-[#6B7280]">Total Leads</span>
+                  <span className="text-white font-bold">{formatNumber(stats?.funnel.leads || 0)}</span>
                 </div>
-                <div>
-                  <p>
-                    • Your conversion rate is <strong>8.4%</strong> - improving to 10% would add{' '}
-                    <strong>+6 sales</strong>
-                  </p>
-                  <p>
-                    • Need <strong>$437/day</strong> to hit goal (currently at <strong>$380/day</strong>)
-                  </p>
+                <div className="h-4 bg-[#1A1A1A] rounded-full overflow-hidden">
+                  <div className="h-full bg-blue-600 rounded-full w-full" />
+                </div>
+              </div>
+
+              {/* Qualified Leads */}
+              <div className="pl-6 border-l-2 border-[#262626]">
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-[#6B7280]">Qualified Leads</span>
+                  <span className="text-white font-bold">{formatNumber(stats?.funnel.qualified_leads || 0)}</span>
+                </div>
+                <div className="h-4 bg-[#1A1A1A] rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-blue-400 rounded-full" 
+                    style={{ width: `${((stats?.funnel.qualified_leads || 0) / (stats?.funnel.leads || 1)) * 100}%` }}
+                  />
+                </div>
+                <span className="text-[10px] text-[#4B5563] mt-1 block">
+                  {((stats?.funnel.qualified_leads || 0) / (stats?.funnel.leads || 1) * 100).toFixed(1)}% qualification rate
+                </span>
+              </div>
+
+              {/* Conversions */}
+              <div className="pl-12 border-l-2 border-[#262626]">
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-[#6B7280]">Conversions (Sales)</span>
+                  <span className="text-white font-bold">{formatNumber(stats?.funnel.conversions || 0)}</span>
+                </div>
+                <div className="h-4 bg-[#1A1A1A] rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-green-500 rounded-full" 
+                    style={{ width: `${((stats?.funnel.conversions || 0) / (stats?.funnel.leads || 1)) * 100}%` }}
+                  />
+                </div>
+                <span className="text-[10px] text-[#4B5563] mt-1 block font-medium text-green-400">
+                  {stats?.funnel.conversion_rate.toFixed(1)}% total conversion rate
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Revenue Breakdown */}
+        <Card className="bg-[#171717] border-[#262626]">
+          <CardHeader>
+            <CardTitle className="text-white">Revenue Sources</CardTitle>
+            <CardDescription>Organic vs. Paid vs. Referrals</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex h-[240px] items-center justify-center gap-12">
+              {/* Circular Chart Placeholder / Mock */}
+              <div className="relative w-40 h-40">
+                <svg className="w-full h-full" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="16" fill="none" className="stroke-neutral-800" strokeWidth="4" />
+                  {/* Organic */}
+                  <circle cx="18" cy="18" r="16" fill="none" className="stroke-blue-500" strokeWidth="4" 
+                    strokeDasharray="60, 100" strokeDashoffset="25" />
+                  {/* Paid */}
+                  <circle cx="18" cy="18" r="16" fill="none" className="stroke-purple-500" strokeWidth="4" 
+                    strokeDasharray="30, 100" strokeDashoffset="85" />
+                  {/* Referral */}
+                  <circle cx="18" cy="18" r="16" fill="none" className="stroke-green-500" strokeWidth="4" 
+                    strokeDasharray="10, 100" strokeDashoffset="95" />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-2xl font-bold text-white">${(stats?.revenue.total || 0) / 1000}k</span>
+                  <span className="text-[10px] text-[#6B7280]">Month</span>
+                </div>
+              </div>
+
+              {/* Legend */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full" />
+                  <div>
+                    <p className="text-xs text-[#6B7280]">Organic</p>
+                    <p className="text-sm font-bold text-white">{formatCurrency(stats?.revenue.by_source.organic || 0)}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 bg-purple-500 rounded-full" />
+                  <div>
+                    <p className="text-xs text-[#6B7280]">Paid Ads</p>
+                    <p className="text-sm font-bold text-white">{formatCurrency(stats?.revenue.by_source.paid || 0)}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 bg-green-500 rounded-full" />
+                  <div>
+                    <p className="text-xs text-[#6B7280]">Referrals</p>
+                    <p className="text-sm font-bold text-white">{formatCurrency(stats?.revenue.by_source.referral || 0)}</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Revenue Overview */}
-      <RevenueOverview data={businessData.revenue} />
-
-      {/* Pipeline & Sources */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <PipelineFunnel data={businessData.pipeline} />
-        <RevenueSources data={businessData.sources} />
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Goals & Action Plan */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GoalsTracker
-          goals={businessData.goals}
-          current={businessData.current}
-          onUpdateGoals={handleUpdateGoals}
-        />
-        <ActionPlan recommendations={businessData.action_plan} />
-      </div>
-
-      {/* Historical Trend */}
-      <Card className="bg-neutral-900/50 border-neutral-800">
-        <CardContent className="p-6">
-          <h3 className="font-semibold text-white mb-4">Revenue Trend (Last 30 Days)</h3>
-
-          {/* Simple line chart visualization */}
-          <div className="h-64 flex items-end gap-2">
-            {Array.from({ length: 30 }, (_, i) => {
-              const height = Math.random() * 100 + 20
-              return (
-                <div key={i} className="flex-1 flex flex-col justify-end">
-                  <div
-                    className="bg-gradient-to-t from-blue-500 to-purple-500 rounded-t transition-all hover:opacity-80 cursor-pointer"
-                    style={{ height: `${height}%` }}
-                    title={`Day ${i + 1}: $${Math.round(height * 10)}`}
-                  />
-                </div>
-              )
-            })}
+      {/* Ad Campaigns Table */}
+      <Card className="bg-[#171717] border-[#262626]">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-white">Active Ad Campaigns</CardTitle>
+            <CardDescription>Performance of your Meta Ads</CardDescription>
           </div>
-
-          <div className="flex justify-between mt-4 text-xs text-neutral-500">
-            <span>30 days ago</span>
-            <span>Today</span>
+          <Button variant="outline" size="sm">
+            <Megaphone className="w-4 h-4 mr-2" />
+            Manage Ads
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-[#262626] text-xs font-medium text-[#6B7280]">
+                  <th className="pb-3 pl-2">Campaign Name</th>
+                  <th className="pb-3 text-center">Status</th>
+                  <th className="pb-3 text-right">Spend</th>
+                  <th className="pb-3 text-right">Leads</th>
+                  <th className="pb-3 text-right">CPA</th>
+                  <th className="pb-3 text-right pr-2">ROAS</th>
+                </tr>
+              </thead>
+              <tbody className="text-sm">
+                <tr className="border-b border-[#262626]/50 hover:bg-[#1A1A1A]/30 transition-colors">
+                  <td className="py-4 pl-2 font-medium text-white">Weight Loss Program - Jan</td>
+                  <td className="py-4 text-center">
+                    <span className="px-2 py-1 bg-green-500/10 text-green-400 rounded text-[10px] font-bold">ACTIVE</span>
+                  </td>
+                  <td className="py-4 text-right text-white">$750.00</td>
+                  <td className="py-4 text-right text-white">38</td>
+                  <td className="py-4 text-right text-white">$19.74</td>
+                  <td className="py-4 text-right font-bold text-green-400 pr-2">3.2x</td>
+                </tr>
+                <tr className="border-b border-[#262626]/50 hover:bg-[#1A1A1A]/30 transition-colors">
+                  <td className="py-4 pl-2 font-medium text-white">Lead Magnet: Guide</td>
+                  <td className="py-4 text-center">
+                    <span className="px-2 py-1 bg-green-500/10 text-green-400 rounded text-[10px] font-bold">ACTIVE</span>
+                  </td>
+                  <td className="py-4 text-right text-white">$210.00</td>
+                  <td className="py-4 text-right text-white">26</td>
+                  <td className="py-4 text-right text-white">$8.07</td>
+                  <td className="py-4 text-right font-bold text-[#6B7280] pr-2">—</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </CardContent>
       </Card>

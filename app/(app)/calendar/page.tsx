@@ -1,261 +1,198 @@
 'use client'
 
-import { useState } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
+import { useState, useEffect, useCallback } from 'react'
+import { CalendarGrid } from '@/components/calendar/CalendarGrid'
+import { PostingTimesHeatmap } from '@/components/calendar/PostingTimesHeatmap'
+import { ContentDistributionChart } from '@/components/calendar/ContentDistributionChart'
 import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { CalendarView } from '@/components/calendar/calendar-view'
-import { EntryDetailModal } from '@/components/calendar/entry-detail-modal'
-import { CalendarStats } from '@/components/calendar/calendar-stats'
-import { Sparkles, Download, List, CalendarDays } from 'lucide-react'
-
-interface CalendarEntry {
-  date: string
-  content_type: 'reel' | 'carousel' | 'post' | 'story'
-  topic: string
-  caption_hook: string
-  content_category:
-    | 'educational'
-    | 'promotional'
-    | 'engagement'
-    | 'transformation'
-    | 'behind_the_scenes'
-  cta: string
-  best_time_to_post: string
-  reasoning: string
-  estimated_engagement: number
-  status?: 'planned' | 'approved' | 'published'
-}
+import { Badge } from '@/components/ui/badge'
+import { 
+  Sparkles, 
+  Plus, 
+  Filter, 
+  Calendar as CalendarIcon,
+  RefreshCw,
+  Loader2
+} from 'lucide-react'
+import { ContentCalendarEntry } from '@/lib/types/v2'
+import { format, startOfMonth } from 'date-fns'
+import { motion, AnimatePresence } from 'framer-motion'
+// import { useToast } from '@/components/ui/use-toast' // Check if this exists
 
 export default function CalendarPage() {
-  const [selectedEntry, setSelectedEntry] = useState<CalendarEntry | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isGenerating, setIsGenerating] = useState(false)
+  const [currentMonth, setCurrentMonth] = useState(new Date())
+  const [posts, setPosts] = useState<ContentCalendarEntry[]>([])
+  const [filteredPosts, setFilteredPosts] = useState<ContentCalendarEntry[]>([])
+  const [bestTimes, setBestTimes] = useState<any[]>([])
+  const [distribution, setDistribution] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState<string>('all')
+  const [generating, setGenerating] = useState(false)
+  
+  // const { toast } = useToast()
 
-  // Mock data - En producción vendría de la API
-  const calendarEntries: CalendarEntry[] = Array.from({ length: 30 }, (_, i) => {
-    const date = new Date()
-    date.setDate(date.getDate() + i)
-
-    const types: CalendarEntry['content_type'][] = ['reel', 'carousel', 'post', 'story']
-    const categories: CalendarEntry['content_category'][] = [
-      'educational',
-      'promotional',
-      'engagement',
-      'transformation',
-      'behind_the_scenes',
-    ]
-
-    return {
-      date: date.toISOString().split('T')[0],
-      content_type: types[i % types.length],
-      topic: [
-        'How I got my first 10 clients in 30 days',
-        '5 myths about fitness coaching',
-        'Client transformation story',
-        'Behind the scenes of my business',
-        'Common mistakes that cost you money',
-      ][i % 5],
-      caption_hook: '🚀 This changed everything...',
-      content_category: categories[i % categories.length],
-      cta: 'Link in bio for free guide',
-      best_time_to_post: i % 2 === 0 ? '6:00 PM EST' : '8:00 AM EST',
-      reasoning:
-        'Based on your best-performing content, this topic resonates with your audience and drives engagement.',
-      estimated_engagement: 5 + Math.random() * 5,
-      status: i < 5 ? 'approved' : 'planned',
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    try {
+      const monthStr = startOfMonth(currentMonth).toISOString()
+      const response = await fetch(`/api/calendar?month=${monthStr}`)
+      const result = await response.json()
+      
+      if (result.success) {
+        setPosts(result.data.posts)
+        setBestTimes(result.data.bestTimes)
+        setDistribution(result.data.distribution)
+      }
+    } catch (error) {
+      console.error('Error fetching calendar data:', error)
+    } finally {
+      setLoading(false)
     }
-  })
+  }, [currentMonth])
 
-  const stats = {
-    total_entries: calendarEntries.length,
-    by_type: [
-      { type: 'reel', count: calendarEntries.filter((e) => e.content_type === 'reel').length },
-      {
-        type: 'carousel',
-        count: calendarEntries.filter((e) => e.content_type === 'carousel').length,
-      },
-      { type: 'post', count: calendarEntries.filter((e) => e.content_type === 'post').length },
-      { type: 'story', count: calendarEntries.filter((e) => e.content_type === 'story').length },
-    ],
-    by_category: [
-      {
-        category: 'educational',
-        count: calendarEntries.filter((e) => e.content_category === 'educational').length,
-      },
-      {
-        category: 'promotional',
-        count: calendarEntries.filter((e) => e.content_category === 'promotional').length,
-      },
-      {
-        category: 'engagement',
-        count: calendarEntries.filter((e) => e.content_category === 'engagement').length,
-      },
-      {
-        category: 'transformation',
-        count: calendarEntries.filter((e) => e.content_category === 'transformation').length,
-      },
-      {
-        category: 'behind_the_scenes',
-        count: calendarEntries.filter((e) => e.content_category === 'behind_the_scenes').length,
-      },
-    ],
-    avg_estimated_engagement:
-      calendarEntries.reduce((sum, e) => sum + e.estimated_engagement, 0) /
-      calendarEntries.length,
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  useEffect(() => {
+    if (filter === 'all') {
+      setFilteredPosts(posts)
+    } else {
+      setFilteredPosts(posts.filter(p => p.content_type === filter))
+    }
+  }, [posts, filter])
+
+  const handleGenerate30Days = async () => {
+    setGenerating(true)
+    try {
+      const response = await fetch('/api/agents/cmo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'generate_full_month' })
+      })
+      
+      if (response.ok) {
+        fetchData()
+      }
+    } catch (error) {
+      console.error('Generation Failed', error)
+    } finally {
+      setGenerating(false)
+    }
   }
 
-  const handleEntryClick = (entry: CalendarEntry) => {
-    setSelectedEntry(entry)
-    setIsModalOpen(true)
-  }
-
-  const handleGenerateMore = async () => {
-    setIsGenerating(true)
-    // Simular generación con IA
-    await new Promise((resolve) => setTimeout(resolve, 3000))
-    setIsGenerating(false)
-  }
-
-  const handleGenerateFullContent = async (entry: CalendarEntry) => {
-    console.log('Generating full content for:', entry)
-    // TODO: Call AI to generate full caption + content suggestions
+  const handleDateClick = (date: Date) => {
+    console.log('Clicked date:', date)
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 max-w-[1600px] mx-auto p-4 lg:p-6">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Smart Calendar</h1>
-          <p className="text-neutral-400">
-            AI-generated content calendar based on what works for YOUR audience
+          <motion.h1 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="text-3xl font-extrabold text-white flex items-center gap-3 tracking-tight"
+          >
+            <CalendarIcon className="w-8 h-8 text-blue-500" />
+            Smart Content Calendar
+          </motion.h1>
+          <p className="text-[#6B7280] mt-1 max-w-xl">
+            Optimized publishing schedule based on your audience behavior and AI strategy.
           </p>
         </div>
-
-        <div className="flex items-center gap-3">
-          <Button
-            onClick={handleGenerateMore}
-            disabled={isGenerating}
-            className="bg-gradient-to-r from-blue-500 to-purple-500"
+        
+        <div className="flex flex-wrap gap-2">
+          <Button 
+            onClick={handleGenerate30Days}
+            disabled={generating}
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 border-0 shadow-lg shadow-purple-500/20"
           >
-            <Sparkles className={`w-4 h-4 mr-2 ${isGenerating ? 'animate-spin' : ''}`} />
-            {isGenerating ? 'Generating...' : 'Generate 30 Days'}
+            {generating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+            Generate 30 Days
           </Button>
-          <Button variant="outline" className="border-neutral-700">
-            <Download className="w-4 h-4 mr-2" />
-            Export CSV
+          <Button className="bg-white text-black hover:bg-neutral-200">
+            <Plus className="w-4 h-4 mr-2" />
+            New Post
           </Button>
         </div>
       </div>
 
-      {/* Info Banner */}
-      <Card className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-blue-500/30">
-        <CardContent className="p-6">
-          <div className="flex items-start gap-3">
-            <Sparkles className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" />
-            <div className="flex-1">
-              <h3 className="font-semibold text-blue-300 mb-2">✨ AI-Powered Calendar:</h3>
-              <p className="text-sm text-blue-200">
-                This calendar is generated based on your best-performing content, ideal follower
-                profile, and business goals. Each piece is strategically placed to maximize
-                engagement and conversions.
-              </p>
-            </div>
+      {/* Control Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-4 p-4 bg-[#171717] rounded-xl border border-[#404040]">
+        <div className="flex items-center gap-3">
+          <Filter className="w-4 h-4 text-[#4B5563]" />
+          <span className="text-sm font-medium text-[#6B7280] mr-2">Filter:</span>
+          <div className="flex gap-2">
+            {['all', 'reel', 'carousel', 'post', 'story'].map(t => (
+              <Badge 
+                key={t}
+                variant={filter === t ? 'default' : 'outline'}
+                className={`cursor-pointer capitalize px-3 py-1 transition-all ${
+                  filter === t 
+                    ? t === 'reel' ? 'bg-blue-600 hover:bg-blue-500' :
+                      t === 'carousel' ? 'bg-purple-600 hover:bg-purple-500' :
+                      t === 'post' ? 'bg-green-600 hover:bg-green-500' :
+                      'bg-white text-black'
+                    : 'border-[#404040] text-[#4B5563] hover:text-white'
+                }`}
+                onClick={() => setFilter(t)}
+              >
+                {t}
+              </Badge>
+            ))}
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Stats */}
-      <CalendarStats stats={stats} />
+        <Button variant="ghost" size="sm" onClick={() => fetchData()} className="text-[#4B5563] hover:text-white">
+          <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          Refresh Data
+        </Button>
+      </div>
 
-      {/* Calendar Tabs */}
-      <Tabs defaultValue="calendar" className="space-y-6">
-        <TabsList className="bg-neutral-900 border border-neutral-800">
-          <TabsTrigger value="calendar">
-            <CalendarDays className="w-4 h-4 mr-2" />
-            Calendar View
-          </TabsTrigger>
-          <TabsTrigger value="list">
-            <List className="w-4 h-4 mr-2" />
-            List View
-          </TabsTrigger>
-        </TabsList>
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+        {/* Main Calendar Grid */}
+        <div className="xl:col-span-9">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentMonth.toISOString()}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              <CalendarGrid 
+                posts={filteredPosts} 
+                onDateClick={handleDateClick}
+                currentMonth={currentMonth}
+                setCurrentMonth={setCurrentMonth}
+              />
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-        <TabsContent value="calendar">
-          <CalendarView
-            entries={calendarEntries}
-            onEntryClick={handleEntryClick}
-            onGenerateMore={handleGenerateMore}
-          />
-        </TabsContent>
-
-        <TabsContent value="list">
-          <Card className="bg-neutral-900/50 border-neutral-800">
-            <CardContent className="p-6">
-              <div className="space-y-3">
-                {calendarEntries.map((entry, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => handleEntryClick(entry)}
-                    className="flex items-center justify-between p-4 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center gap-4 flex-1">
-                      <div className="text-center">
-                        <p className="text-xs text-neutral-500">
-                          {new Date(entry.date).toLocaleDateString('en-US', { month: 'short' })}
-                        </p>
-                        <p className="text-xl font-bold text-white">
-                          {new Date(entry.date).getDate()}
-                        </p>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-lg">
-                            {entry.content_type === 'reel'
-                              ? '🎬'
-                              : entry.content_type === 'carousel'
-                              ? '📸'
-                              : entry.content_type === 'post'
-                              ? '📄'
-                              : '📱'}
-                          </span>
-                          <h4 className="font-medium text-white">{entry.topic}</h4>
-                        </div>
-                        <p className="text-xs text-neutral-500">
-                          {entry.best_time_to_post} • Est. {entry.estimated_engagement.toFixed(1)}
-                          % engagement
-                        </p>
-                      </div>
-                    </div>
-                    {entry.status && (
-                      <span
-                        className={`text-xs px-2 py-1 rounded ${
-                          entry.status === 'published'
-                            ? 'bg-green-500/20 text-green-400'
-                            : entry.status === 'approved'
-                            ? 'bg-blue-500/20 text-blue-400'
-                            : 'bg-neutral-700 text-neutral-400'
-                        }`}
-                      >
-                        {entry.status}
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {/* Entry Detail Modal */}
-      <EntryDetailModal
-        entry={selectedEntry}
-        open={isModalOpen}
-        onOpenChange={setIsModalOpen}
-        onGenerateFullContent={handleGenerateFullContent}
-      />
+        {/* Intelligence Sidebar */}
+        <div className="xl:col-span-3 space-y-6">
+          <PostingTimesHeatmap data={bestTimes} />
+          
+          <ContentDistributionChart data={distribution} />
+          
+          <div className="p-5 rounded-xl bg-gradient-to-br from-blue-600/20 to-purple-600/20 border border-blue-500/30">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
+              <Sparkles className="w-4 h-4 text-yellow-400" />
+              Strategy Advice
+            </h3>
+            <p className="text-xs text-[#9CA3AF] leading-relaxed italic">
+              "Your audience is currently responding best to <strong>educational carousels</strong> on Tuesday mornings. 
+              We suggest increasing your Reel frequency to 3x/week to maximize reach."
+            </p>
+            <Button variant="link" className="text-xs text-blue-400 p-0 h-auto mt-4 hover:text-blue-300">
+              View CMO Deep Dive →
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

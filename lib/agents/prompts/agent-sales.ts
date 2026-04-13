@@ -310,7 +310,7 @@ export function generateSalesPrompt(task: 'landing' | 'emails' | 'ads' | 'object
 `
 
   if (task === 'landing') {
-    return \`\${baseContext}
+    return `${baseContext}
 
 ## TAREA: LANDING PAGE COPY COMPLETO (1500 palabras)
 
@@ -323,11 +323,11 @@ IMPORTANTE:
 - Sin escasez artificial
 - Garantía realista
 
-Responde SOLO con el JSON. Sin texto adicional.\`
+Responde SOLO con el JSON. Sin texto adicional.`
   }
 
   if (task === 'emails') {
-    return \`\${baseContext}
+    return `${baseContext}
 
 ## TAREA: EMAIL SEQUENCE (\${data.sequenceType || 'warm'})
 
@@ -345,11 +345,11 @@ Cada versión debe tener:
 - Body (150-250 palabras)
 - Un solo CTA claro
 
-Responde SOLO con el JSON. Sin texto adicional.\`
+Responde SOLO con el JSON. Sin texto adicional.`
   }
 
   if (task === 'ads') {
-    return \`\${baseContext}
+    return `${baseContext}
 
 ## TAREA: AD COPY (Meta Ads + Google Ads)
 
@@ -368,11 +368,11 @@ Testea estos ángulos:
 
 IMPORTANTE: Cada variación debe ser SUSTANCIALMENTE diferente.
 
-Responde SOLO con el JSON. Sin texto adicional.\`
+Responde SOLO con el JSON. Sin texto adicional.`
   }
 
   // Objections
-  return \`\${baseContext}
+  return `${baseContext}
 
 ## TAREA: MANEJO DE OBJECIONES
 
@@ -384,5 +384,5 @@ Para cada una, proporciona:
 - Proof point o evidencia
 - Reframe positivo
 
-Responde SOLO con el JSON. Sin texto adicional.\`
+Responde SOLO con el JSON. Sin texto adicional.`
 }

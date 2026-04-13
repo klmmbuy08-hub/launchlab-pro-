@@ -1,0 +1,198 @@
+'use client'
+
+import { useState, useEffect, useCallback } from 'react'
+import { CalendarGrid } from '@/components/calendar/CalendarGrid'
+import { PostingTimesHeatmap } from '@/components/calendar/PostingTimesHeatmap'
+import { ContentDistributionChart } from '@/components/calendar/ContentDistributionChart'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { 
+  Sparkles, 
+  Plus, 
+  Filter, 
+  Calendar as CalendarIcon,
+  RefreshCw,
+  Loader2
+} from 'lucide-react'
+import { ContentCalendarEntry } from '@/lib/types/v2'
+import { format, startOfMonth } from 'date-fns'
+import { motion, AnimatePresence } from 'framer-motion'
+// import { useToast } from '@/components/ui/use-toast' // Check if this exists
+
+export default function CalendarPage() {
+  const [currentMonth, setCurrentMonth] = useState(new Date())
+  const [posts, setPosts] = useState<ContentCalendarEntry[]>([])
+  const [filteredPosts, setFilteredPosts] = useState<ContentCalendarEntry[]>([])
+  const [bestTimes, setBestTimes] = useState<any[]>([])
+  const [distribution, setDistribution] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState<string>('all')
+  const [generating, setGenerating] = useState(false)
+  
+  // const { toast } = useToast()
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    try {
+      const monthStr = startOfMonth(currentMonth).toISOString()
+      const response = await fetch(`/api/calendar?month=${monthStr}`)
+      const result = await response.json()
+      
+      if (result.success) {
+        setPosts(result.data.posts)
+        setBestTimes(result.data.bestTimes)
+        setDistribution(result.data.distribution)
+      }
+    } catch (error) {
+      console.error('Error fetching calendar data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }, [currentMonth])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  useEffect(() => {
+    if (filter === 'all') {
+      setFilteredPosts(posts)
+    } else {
+      setFilteredPosts(posts.filter(p => p.content_type === filter))
+    }
+  }, [posts, filter])
+
+  const handleGenerate30Days = async () => {
+    setGenerating(true)
+    try {
+      const response = await fetch('/api/agents/cmo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'generate_full_month' })
+      })
+      
+      if (response.ok) {
+        fetchData()
+      }
+    } catch (error) {
+      console.error('Generation Failed', error)
+    } finally {
+      setGenerating(false)
+    }
+  }
+
+  const handleDateClick = (date: Date) => {
+    console.log('Clicked date:', date)
+  }
+
+  return (
+    <div className="space-y-6 max-w-[1600px] mx-auto p-4 lg:p-6">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <motion.h1 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="text-3xl font-extrabold text-white flex items-center gap-3 tracking-tight"
+          >
+            <CalendarIcon className="w-8 h-8 text-blue-500" />
+            Smart Content Calendar
+          </motion.h1>
+          <p className="text-neutral-400 mt-1 max-w-xl">
+            Optimized publishing schedule based on your audience behavior and AI strategy.
+          </p>
+        </div>
+        
+        <div className="flex flex-wrap gap-2">
+          <Button 
+            onClick={handleGenerate30Days}
+            disabled={generating}
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 border-0 shadow-lg shadow-purple-500/20"
+          >
+            {generating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+            Generate 30 Days
+          </Button>
+          <Button className="bg-white text-black hover:bg-neutral-200">
+            <Plus className="w-4 h-4 mr-2" />
+            New Post
+          </Button>
+        </div>
+      </div>
+
+      {/* Control Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-4 p-4 bg-[#171717] rounded-xl border border-[#404040]">
+        <div className="flex items-center gap-3">
+          <Filter className="w-4 h-4 text-neutral-500" />
+          <span className="text-sm font-medium text-neutral-400 mr-2">Filter:</span>
+          <div className="flex gap-2">
+            {['all', 'reel', 'carousel', 'post', 'story'].map(t => (
+              <Badge 
+                key={t}
+                variant={filter === t ? 'default' : 'outline'}
+                className={`cursor-pointer capitalize px-3 py-1 transition-all ${
+                  filter === t 
+                    ? t === 'reel' ? 'bg-blue-600 hover:bg-blue-500' :
+                      t === 'carousel' ? 'bg-purple-600 hover:bg-purple-500' :
+                      t === 'post' ? 'bg-green-600 hover:bg-green-500' :
+                      'bg-white text-black'
+                    : 'border-[#404040] text-neutral-500 hover:text-white'
+                }`}
+                onClick={() => setFilter(t)}
+              >
+                {t}
+              </Badge>
+            ))}
+          </div>
+        </div>
+
+        <Button variant="ghost" size="sm" onClick={() => fetchData()} className="text-neutral-500 hover:text-white">
+          <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          Refresh Data
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+        {/* Main Calendar Grid */}
+        <div className="xl:col-span-9">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentMonth.toISOString()}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              <CalendarGrid 
+                posts={filteredPosts} 
+                onDateClick={handleDateClick}
+                currentMonth={currentMonth}
+                setCurrentMonth={setCurrentMonth}
+              />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Intelligence Sidebar */}
+        <div className="xl:col-span-3 space-y-6">
+          <PostingTimesHeatmap data={bestTimes} />
+          
+          <ContentDistributionChart data={distribution} />
+          
+          <div className="p-5 rounded-xl bg-gradient-to-br from-blue-600/20 to-purple-600/20 border border-blue-500/30">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
+              <Sparkles className="w-4 h-4 text-yellow-400" />
+              Strategy Advice
+            </h3>
+            <p className="text-xs text-neutral-300 leading-relaxed italic">
+              "Your audience is currently responding best to <strong>educational carousels</strong> on Tuesday mornings. 
+              We suggest increasing your Reel frequency to 3x/week to maximize reach."
+            </p>
+            <Button variant="link" className="text-xs text-blue-400 p-0 h-auto mt-4 hover:text-blue-300">
+              View CMO Deep Dive →
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

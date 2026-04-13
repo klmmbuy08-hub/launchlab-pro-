@@ -1,267 +1,257 @@
 'use client'
 
-import { useState } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
+import { useState, useEffect } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { MetricsDashboard } from '@/components/analytics/metrics-dashboard'
-import { ReportPreview } from '@/components/analytics/report-preview'
-import { TrendChart } from '@/components/analytics/trend-chart'
-import { FileText, Calendar, Download, Sparkles, BarChart3, Clock } from 'lucide-react'
+import { Download, Calendar, TrendingUp, Users, Eye, BarChart3, Settings } from 'lucide-react'
+import DateRangePicker from '@/components/analytics/DateRangePicker'
+import ReportTemplateCard from '@/components/analytics/ReportTemplateCard'
+import MetricsDashboard from '@/components/analytics/MetricsDashboard'
+import ExportMenu from '@/components/analytics/ExportMenu'
+import ReportPreview from '@/components/analytics/ReportPreview'
+import { AnalyticsData, DateRange } from '@/lib/types/analytics'
 
 export default function AnalyticsPage() {
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'quarter'>('month')
+  const [loading, setLoading] = useState(true)
+  const [data, setData] = useState<AnalyticsData | null>(null)
+  const [dateRange, setDateRange] = useState<DateRange>({ preset: 'last_30', days: 30 })
+  const [selectedReport, setSelectedReport] = useState<string | null>(null)
+  const [previewOpen, setPreviewOpen] = useState(false)
+  const [scheduleOpen, setScheduleOpen] = useState(false)
+  const [exporting, setExporting] = useState(false)
 
-  // Mock data
-  const metrics = {
-    revenue: { current: 12450, previous: 10200, change: 22.1 },
-    leads: { current: 347, previous: 289, change: 20.1 },
-    conversions: { current: 29, previous: 23, change: 26.1 },
-    engagement: { current: 6.8, previous: 5.9, change: 15.3 },
-    followers: { current: 12458, previous: 10850, change: 14.8 },
-    content_pieces: { current: 45, previous: 38, change: 18.4 },
-  }
+  useEffect(() => {
+    fetchAnalytics()
+  }, [dateRange])
 
-  const mockReport = {
-    title: 'Monthly Report - March 2024',
-    executive_summary:
-      'Strong month with 22% revenue growth driven by improved content strategy and higher engagement rates. Key wins include 347 new leads and successful launch of transformation program.',
-    sections: [
-      {
-        title: 'Revenue & Growth',
-        content:
-          'This month you generated $12,450 in revenue, representing a 22.1% increase from last month. This growth was driven primarily by your transformation program launch and improved conversion rates from organic content.',
-        metrics: [
-          { label: 'Total Revenue', value: '$12,450', change: '+22.1%' },
-          { label: 'Conversions', value: '29', change: '+26.1%' },
-          { label: 'Avg Deal Value', value: '$429' },
-        ],
-        insights: [
-          'Revenue per lead improved by 8% this month',
-          'Your transformation program accounted for 60% of revenue',
-          'Organic content drove 73% of conversions',
-        ],
-      },
-      {
-        title: 'Content Strategy',
-        content:
-          'You published 45 pieces of content this month with an average engagement rate of 6.8%. Your reels significantly outperformed other content types, generating 3.2x more revenue per post.',
-        metrics: [
-          { label: 'Total Posts', value: '45', change: '+18.4%' },
-          { label: 'Avg Engagement', value: '6.8%', change: '+15.3%' },
-          { label: 'Top Format', value: 'Reels' },
-        ],
-        insights: [
-          'Reels generated $60 revenue per post vs $18 for static posts',
-          'Educational content brought 4x more qualified leads',
-          'Posts at 6-8 PM had 45% higher engagement',
-        ],
-      },
-      {
-        title: 'Audience Development',
-        content:
-          'Your audience grew by 1,608 followers (14.8%) this month, with strong engagement from the 25-34 age demographic. Follower quality improved significantly with higher lead-to-follower ratios.',
-        metrics: [
-          { label: 'New Followers', value: '+1,608', change: '+14.8%' },
-          { label: 'Engagement Rate', value: '6.8%', change: '+15.3%' },
-          { label: 'Lead Rate', value: '2.8%' },
-        ],
-        insights: [
-          'Your ideal follower profile is increasingly accurate',
-          'Female followers (65%) show higher engagement',
-          'Los Angeles audience is your most valuable segment',
-        ],
-      },
-    ],
-    recommendations: [
-      'Double down on reels - they\'re generating 3.2x more revenue per post than static content',
-      'Create 2-3 transformation stories per week - these drive 85% higher engagement',
-      'Launch an email nurture sequence for your 142 warm leads in the pipeline',
-      'Consider raising prices on your transformation program given strong demand',
-      'Test running paid ads to your best-performing organic reel',
-    ],
-    next_steps: [
-      'Create 12-15 reels for April (targeting 60% educational, 40% transformation)',
-      'Build email sequence with 5 touchpoints for lead nurturing',
-      'Set up consultation booking system for qualified leads',
-      'Analyze competitor gaps and create content to fill those spaces',
-    ],
-  }
+  const fetchAnalytics = async () => {
+    try {
+      setLoading(true)
+      const queryParams = new URLSearchParams({
+        preset: dateRange.preset,
+        ...(dateRange.custom && {
+          start_date: dateRange.custom.start.toISOString().split('T')[0],
+          end_date: dateRange.custom.end.toISOString().split('T')[0],
+        }),
+      })
 
-  const revenueData = Array.from({ length: 30 }, (_, i) => ({
-    date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString(),
-    value: 300 + Math.random() * 200,
-  }))
+      const response = await fetch(`/api/analytics?${queryParams}`)
+      const result = await response.json()
 
-  const leadsData = Array.from({ length: 30 }, (_, i) => ({
-    date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString(),
-    value: Math.floor(8 + Math.random() * 8),
-  }))
-
-  const engagementData = Array.from({ length: 30 }, (_, i) => ({
-    date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString(),
-    value: 5 + Math.random() * 3,
-  }))
-
-  const handleGenerateReport = async () => {
-    setIsGenerating(true)
-    // Simular generación con IA
-    await new Promise((resolve) => setTimeout(resolve, 3000))
-    setIsGenerating(false)
-  }
-
-  const handleDownloadReport = () => {
-    console.log('Downloading report as PDF...')
-    // TODO: Implement PDF download
-  }
-
-  const getPeriodLabel = () => {
-    switch (selectedPeriod) {
-      case 'week':
-        return 'Last 7 Days'
-      case 'month':
-        return 'Last 30 Days'
-      case 'quarter':
-        return 'Last 90 Days'
+      if (result.success) {
+        setData(result.data)
+      }
+    } catch (error) {
+      console.error('Error:', error)
+    } finally {
+      setLoading(false)
     }
   }
 
+  const handleGenerateReport = async (templateType: string) => {
+    setSelectedReport(templateType)
+    setPreviewOpen(true)
+  }
+
+  const handleExport = async (format: 'pdf' | 'csv' | 'email') => {
+    setExporting(true)
+    try {
+      const response = await fetch('/api/analytics/export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          format,
+          dateRange,
+          reportType: selectedReport || 'full',
+          data,
+        }),
+      })
+
+      if (!response.ok) throw new Error('Export failed')
+
+      if (format === 'pdf' || format === 'csv') {
+        const blob = await response.blob()
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `report.${format === 'pdf' ? 'pdf' : 'csv'}`
+        a.click()
+      }
+    } catch (error) {
+      console.error('Export error:', error)
+    } finally {
+      setExporting(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[600px]">
+        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Analytics & Reporting</h1>
-          <p className="text-neutral-400">
-            Comprehensive insights and professional reports for your business
-          </p>
+          <h1 className="text-3xl font-bold text-white">Analytics & Reports</h1>
+          <p className="text-neutral-400 mt-1">Track performance and generate insights</p>
         </div>
-
-        <div className="flex items-center gap-3">
-          {/* Period Selector */}
-          <div className="flex items-center gap-2 p-1 rounded-lg bg-neutral-900 border border-neutral-800">
-            {(['week', 'month', 'quarter'] as const).map((period) => (
-              <button
-                key={period}
-                onClick={() => setSelectedPeriod(period)}
-                className={`px-4 py-2 rounded text-sm font-medium transition-all capitalize ${
-                  selectedPeriod === period
-                    ? 'bg-blue-500 text-white'
-                    : 'text-neutral-400 hover:text-white'
-                }`}
-              >
-                {period}
-              </button>
-            ))}
-          </div>
-
+        <div className="flex gap-3">
+          <ExportMenu onExport={handleExport} loading={exporting} />
           <Button
-            onClick={handleGenerateReport}
-            disabled={isGenerating}
-            className="bg-gradient-to-r from-blue-500 to-purple-500"
+            variant="outline"
+            size="sm"
+            onClick={() => setScheduleOpen(true)}
+            className="border-neutral-700"
           >
-            <Sparkles className={`w-4 h-4 mr-2 ${isGenerating ? 'animate-spin' : ''}`} />
-            {isGenerating ? 'Generating...' : 'Generate Report'}
+            <Calendar className="w-4 h-4 mr-2" />
+            Schedule
           </Button>
         </div>
       </div>
 
-      {/* Metrics Overview */}
-      <MetricsDashboard metrics={metrics} period={getPeriodLabel()} />
+      {/* Date Range Picker */}
+      <DateRangePicker value={dateRange} onChange={setDateRange} />
 
-      {/* Tabs */}
-      <Tabs defaultValue="trends" className="space-y-6">
+      <Tabs defaultValue="overview" className="space-y-6">
         <TabsList className="bg-neutral-900 border border-neutral-800">
-          <TabsTrigger value="trends">
-            <BarChart3 className="w-4 h-4 mr-2" />
-            Trends
-          </TabsTrigger>
-          <TabsTrigger value="report">
-            <FileText className="w-4 h-4 mr-2" />
-            Full Report
-          </TabsTrigger>
-          <TabsTrigger value="history">
-            <Clock className="w-4 h-4 mr-2" />
-            Historical Reports
-          </TabsTrigger>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="reports">Report Templates</TabsTrigger>
+          <TabsTrigger value="metrics">Key Metrics</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="trends" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <TrendChart title="Daily Revenue" data={revenueData} format="currency" />
-            <TrendChart title="Daily Leads" data={leadsData} format="number" />
+        {/* Overview Tab */}
+        <TabsContent value="overview" className="space-y-6">
+          {data && <MetricsDashboard data={data} dateRange={dateRange} />}
+        </TabsContent>
+
+        {/* Reports Tab */}
+        <TabsContent value="reports" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <ReportTemplateCard
+              title="Weekly Summary"
+              description="Last 7 days performance overview"
+              icon={<TrendingUp className="w-6 h-6" />}
+              onClick={() => handleGenerateReport('weekly')}
+            />
+            <ReportTemplateCard
+              title="Monthly Report"
+              description="Complete 30-day analysis"
+              icon={<BarChart3 className="w-6 h-6" />}
+              onClick={() => handleGenerateReport('monthly')}
+            />
+            <ReportTemplateCard
+              title="Quarterly Review"
+              description="90-day strategic review"
+              icon={<Eye className="w-6 h-6" />}
+              onClick={() => handleGenerateReport('quarterly')}
+            />
+            <ReportTemplateCard
+              title="Custom Report"
+              description="Build your own report"
+              icon={<Settings className="w-6 h-6" />}
+              onClick={() => handleGenerateReport('custom')}
+            />
           </div>
-          <TrendChart title="Daily Engagement Rate" data={engagementData} format="percentage" />
         </TabsContent>
 
-        <TabsContent value="report">
-          <ReportPreview report={mockReport} onDownload={handleDownloadReport} />
-        </TabsContent>
+        {/* Metrics Tab */}
+        <TabsContent value="metrics" className="space-y-6">
+          {data && (
+            <div className="space-y-6">
+              {/* Revenue Trend */}
+              <Card className="bg-neutral-900 border-neutral-800">
+                <CardHeader>
+                  <CardTitle className="text-white">Revenue Trend</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <MetricsDashboard data={data} chartType="revenue" dateRange={dateRange} />
+                </CardContent>
+              </Card>
 
-        <TabsContent value="history">
-          <Card className="bg-neutral-900/50 border-neutral-800">
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                {[
-                  { month: 'March 2024', generated: '2024-04-01', revenue: '$12,450' },
-                  { month: 'February 2024', generated: '2024-03-01', revenue: '$10,200' },
-                  { month: 'January 2024', generated: '2024-02-01', revenue: '$9,800' },
-                ].map((report, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between p-4 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 rounded-lg bg-blue-500/10">
-                        <FileText className="w-6 h-6 text-blue-400" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-white">{report.month} Report</h3>
-                        <p className="text-sm text-neutral-500">
-                          Generated {new Date(report.generated).toLocaleDateString()} •{' '}
-                          {report.revenue} revenue
-                        </p>
-                      </div>
-                    </div>
-                    <Button variant="outline" size="sm" className="border-neutral-700">
-                      <Download className="w-4 h-4 mr-2" />
-                      Download
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+              {/* Lead Generation */}
+              <Card className="bg-neutral-900 border-neutral-800">
+                <CardHeader>
+                  <CardTitle className="text-white">Lead Generation</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <MetricsDashboard data={data} chartType="leads" dateRange={dateRange} />
+                </CardContent>
+              </Card>
+
+              {/* ROI by Channel */}
+              <Card className="bg-neutral-900 border-neutral-800">
+                <CardHeader>
+                  <CardTitle className="text-white">ROI by Channel</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <MetricsDashboard data={data} chartType="roi" dateRange={dateRange} />
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </TabsContent>
       </Tabs>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-neutral-900/50 border-neutral-800 hover:border-neutral-700 transition-colors cursor-pointer">
-          <CardContent className="p-6">
-            <Calendar className="w-8 h-8 text-blue-400 mb-3" />
-            <h3 className="font-semibold text-white mb-1">Schedule Report</h3>
-            <p className="text-sm text-neutral-400">Get automated reports weekly or monthly</p>
-          </CardContent>
-        </Card>
+      {/* Report Preview Modal */}
+      {selectedReport && (
+        <ReportPreview
+          open={previewOpen}
+          onOpenChange={setPreviewOpen}
+          reportType={selectedReport}
+          dateRange={dateRange}
+          onExport={handleExport}
+        />
+      )}
 
-        <Card className="bg-neutral-900/50 border-neutral-800 hover:border-neutral-700 transition-colors cursor-pointer">
-          <CardContent className="p-6">
-            <Download className="w-8 h-8 text-green-400 mb-3" />
-            <h3 className="font-semibold text-white mb-1">Export Data</h3>
-            <p className="text-sm text-neutral-400">Download raw data as CSV or Excel</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-neutral-900/50 border-neutral-800 hover:border-neutral-700 transition-colors cursor-pointer">
-          <CardContent className="p-6">
-            <FileText className="w-8 h-8 text-purple-400 mb-3" />
-            <h3 className="font-semibold text-white mb-1">Custom Report</h3>
-            <p className="text-sm text-neutral-400">Build a report with specific metrics</p>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Schedule Modal */}
+      {scheduleOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <Card className="bg-neutral-900 border-neutral-800 w-full max-w-md">
+            <CardHeader>
+              <CardTitle className="text-white">Schedule Reports</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="block text-sm text-neutral-400 mb-2">Frequency</label>
+                <select className="w-full bg-neutral-800 border border-neutral-700 rounded px-3 py-2 text-white">
+                  <option>Weekly</option>
+                  <option>Monthly</option>
+                  <option>Quarterly</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-neutral-400 mb-2">Email Recipient</label>
+                <input
+                  type="email"
+                  placeholder="your@email.com"
+                  className="w-full bg-neutral-800 border border-neutral-700 rounded px-3 py-2 text-white"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  className="flex-1"
+                  onClick={() => setScheduleOpen(false)}
+                >
+                  Schedule
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setScheduleOpen(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }

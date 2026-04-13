@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   description: "Sistema de Adquisición con IA para Inmobiliarias",
 };
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default function RootLayout({
   children,
 }: Readonly<{

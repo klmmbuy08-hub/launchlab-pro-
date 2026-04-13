@@ -1,0 +1,93 @@
+'use client'
+
+import { Users, UserPlus, UserMinus, Target, TrendingUp, Search } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { motion } from 'framer-motion'
+
+export default function AudiencePage() {
+  return (
+    <div className="space-y-8 pb-12">
+      {/* Header Area */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-black text-white tracking-tighter">Audience Insights</h1>
+          <p className="text-[#6B7280] mt-1">AI-powered analysis of your business community.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm" className="hidden md:flex">Export Data</Button>
+          <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white border-0">Refresh Sync</Button>
+        </div>
+      </div>
+
+      {/* Quick Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: 'Total Audience', value: '42,891', diff: '+12%', icon: Users, color: 'text-blue-500' },
+          { label: 'New Followers', value: '1,204', diff: '+5.4%', icon: UserPlus, color: 'text-green-500' },
+          { label: 'Churn Rate', value: '0.8%', diff: '-2%', icon: UserMinus, color: 'text-red-500' },
+          { label: 'Engagement', value: '18.2%', diff: '+3.1%', icon: Target, color: 'text-purple-500' },
+        ].map((stat, i) => (
+          <motion.div
+            key={stat.label}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+          >
+            <Card className="bg-[#171717] border-[#262626] p-6">
+              <div className="flex items-start justify-between">
+                <div className={`p-2 rounded-xl bg-black border border-[#262626] ${stat.color}`}>
+                  <stat.icon className="w-5 h-5" />
+                </div>
+                <span className="text-[10px] font-bold text-green-400 bg-green-400/10 px-2 py-1 rounded-full">{stat.diff}</span>
+              </div>
+              <div className="mt-4">
+                <p className="text-xs font-bold text-[#4B5563] uppercase tracking-widest">{stat.label}</p>
+                <h3 className="text-2xl font-black text-white mt-1">{stat.value}</h3>
+              </div>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Growth Chart Placeholder */}
+        <Card className="lg:col-span-2 bg-[#171717] border-[#262626] p-8 flex flex-col items-center justify-center min-h-[400px]">
+          <TrendingUp className="w-12 h-12 text-neutral-800 mb-4" />
+          <h4 className="text-lg font-bold text-white">Growth Analytics</h4>
+          <p className="text-[#4B5563] text-sm max-w-xs text-center mt-2">
+            Historical growth data is being processed by the AI agents. Check back in a few minutes.
+          </p>
+        </Card>
+
+        {/* Demographic Breakdown */}
+        <Card className="bg-[#171717] border-[#262626] p-6">
+          <h4 className="text-sm font-bold text-white uppercase tracking-widest mb-6">Top Demographics</h4>
+          <div className="space-y-6">
+            {[
+              { label: 'United States', value: 45, color: 'bg-blue-500' },
+              { label: 'Mexico', value: 28, color: 'bg-green-500' },
+              { label: 'Spain', value: 15, color: 'bg-yellow-500' },
+              { label: 'Others', value: 12, color: 'bg-neutral-600' },
+            ].map(item => (
+              <div key={item.label} className="space-y-2">
+                <div className="flex justify-between text-xs font-bold">
+                  <span className="text-[#6B7280]">{item.label}</span>
+                  <span className="text-white">{item.value}%</span>
+                </div>
+                <div className="h-2 w-full bg-black rounded-full overflow-hidden border border-[#262626]">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${item.value}%` }}
+                    className={`h-full ${item.color}`} 
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+    </div>
+  )
+}

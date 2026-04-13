@@ -1,59 +1,59 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseKey)
 
 export type Database = {
   public: {
     Tables: {
-      users: {
+      leads: {
         Row: {
           id: string
-          email: string
-          full_name: string | null
-          avatar_url: string | null
-          subscription_tier: 'free' | 'pro' | 'agency'
-          subscription_status: string | null
-          stripe_customer_id: string | null
-          stripe_subscription_id: string | null
-          created_at: string
-          updated_at: string
-        }
-      }
-      launches: {
-        Row: {
-          id: string
-          user_id: string
           name: string
-          product_type: string
-          price: number
-          target_audience: string
-          description: string | null
-          launch_date: string | null
-          status: 'draft' | 'active' | 'completed'
+          email: string
+          phone: string
+          company: string
+          status: 'new' | 'contacted' | 'qualified' | 'proposal' | 'closed'
+          source: string
+          value: number
           created_at: string
           updated_at: string
         }
+        Insert: Omit<Database['public']['Tables']['leads']['Row'], 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Database['public']['Tables']['leads']['Insert']>
       }
-      agent_generations: {
+      content: {
         Row: {
           id: string
-          launch_id: string
-          agent_type: 'ceo' | 'cmo' | 'sales' | 'designer' | 'voice' | 'cdo' | 'coo'
-          task: string
-          content: any
+          title: string
+          platform: 'instagram' | 'linkedin' | 'tiktok' | 'twitter'
+          content_type: 'reel' | 'carousel' | 'post' | 'story'
+          status: 'draft' | 'scheduled' | 'published'
+          scheduled_date: string | null
+          published_date: string | null
+          ai_score: number | null
           created_at: string
         }
-        Insert: {
-          id?: string
-          launch_id: string
-          agent_type: 'ceo' | 'cmo' | 'sales' | 'designer' | 'voice' | 'cdo' | 'coo'
-          task: string
-          content: any
-          created_at?: string
+        Insert: Omit<Database['public']['Tables']['content']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['content']['Insert']>
+      }
+      workflows: {
+        Row: {
+          id: string
+          name: string
+          description: string
+          status: 'active' | 'paused' | 'draft'
+          platform: 'n8n' | 'make' | 'zapier'
+          trigger: string
+          executions: number
+          last_run: string | null
+          success_rate: number
+          created_at: string
         }
+        Insert: Omit<Database['public']['Tables']['workflows']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['workflows']['Insert']>
       }
     }
   }

@@ -1,92 +1,344 @@
 'use client'
 
+import { useState, useMemo } from 'react'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { StoryPatternsView } from '@/components/stories/story-patterns-view'
-import { RefreshCw, BookOpen } from 'lucide-react'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { 
+  Sparkles, 
+  Settings, 
+  Layout, 
+  Palette, 
+  Type, 
+  Smile, 
+  Music, 
+  Send, 
+  Calendar,
+  Zap,
+  TrendingUp,
+  ChevronRight,
+  Plus
+} from 'lucide-react'
+import { PhoneMockup } from '@/components/stories/PhoneMockup'
+import { StoryTemplateCard } from '@/components/stories/StoryTemplateCard'
+import { StickerPicker } from '@/components/stories/StickerPicker'
+import { SeriesGenerator } from '@/components/stories/SeriesGenerator'
+import { StoryContent, StoryTemplate, StickerType } from '@/lib/types/stories'
+import { cn } from '@/lib/utils'
 
-export default function StoriesPage() {
-  // Mock data
-  const storyData = {
-    patterns: [
-      {
-        narrative_type: 'Transformation Story',
-        avg_engagement: 9.2,
-        avg_revenue: 850,
-        frequency: 12,
-        examples: [
-          'How I lost 40lbs in 90 days without giving up my favorite foods',
-          'From broke to $10K/month: My journey',
-          'Client spotlight: Sarah lost 30lbs and gained her confidence back',
-        ],
-      },
-      {
-        narrative_type: 'Mistake/Problem Story',
-        avg_engagement: 7.8,
-        avg_revenue: 620,
-        frequency: 8,
-        examples: [
-          '5 mistakes that kept me fat for years',
-          'Why your workouts aren\'t working (and what to do instead)',
-          'The biggest lie fitness coaches tell you',
-        ],
-      },
-      {
-        narrative_type: 'List/Framework',
-        avg_engagement: 6.5,
-        avg_revenue: 480,
-        frequency: 15,
-        examples: [
-          '7 foods that burn belly fat faster',
-          '3 simple exercises for a toned body',
-          'My 5-step morning routine',
-        ],
-      },
-    ],
-    insights: [
-      'Your "Transformation Story" stories generate the most revenue ($850 avg)',
-      '"Mistake/Problem Story" is your second-best performer (7.8% engagement)',
-      'List/Framework content gets the most shares but lower conversion',
-    ],
+const TEMPLATES: StoryTemplate[] = [
+  { 
+    id: 'poll-1', 
+    name: 'Quick Poll', 
+    category: 'engagement', 
+    preview: 'linear-gradient(135deg, #FF0080 0%, #7928CA 100%)',
+    baseContent: {
+      background: { type: 'gradient', value: 'linear-gradient(135deg, #FF0080 0%, #7928CA 100%)' },
+      text: { content: 'Should we launch the new feature tomorrow?', position: 'top', style: 'modern' },
+      sticker: { type: 'poll', question: 'Ready?', options: ['YES!', 'Wait...'] }
+    }
+  },
+  { 
+    id: 'question-1', 
+    name: 'AMA / Q&A', 
+    category: 'engagement', 
+    preview: 'linear-gradient(45deg, #f093fb 0%, #f5576c 100%)',
+    baseContent: {
+      background: { type: 'gradient', value: 'linear-gradient(45deg, #f093fb 0%, #f5576c 100%)' },
+      text: { content: 'Ask me anything about LaunchOS', position: 'top', style: 'minimal' },
+      sticker: { type: 'question', question: 'Leave a question!' }
+    }
+  },
+  { 
+    id: 'quiz-1', 
+    name: 'Knowledge Test', 
+    category: 'educational', 
+    preview: 'linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)',
+    baseContent: {
+      background: { type: 'gradient', value: 'linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)' },
+      text: { content: 'What is the most effective conversion tactic?', position: 'top', style: 'modern' },
+      sticker: { type: 'quiz', question: 'Take the quiz', options: ['Personalization', 'Scarcity', 'Social Proof', 'All of them'] }
+    }
+  },
+  { 
+    id: 'tip-1', 
+    name: 'Daily Growth Tip', 
+    category: 'educational', 
+    preview: 'linear-gradient(to right, #434343 0%, black 100%)',
+    baseContent: {
+      background: { type: 'solid', value: '#000000' },
+      text: { content: 'Tip #4: Automate your follow-ups to increase retention by 40%.', position: 'center', style: 'modern' }
+    }
+  },
+  { 
+    id: 'transformation-1', 
+    name: 'Transformation', 
+    category: 'behind-the-scenes', 
+    preview: 'linear-gradient(to top, #30cfd0 0%, #330867 100%)',
+    baseContent: {
+      background: { type: 'gradient', value: 'linear-gradient(to top, #30cfd0 0%, #330867 100%)' },
+      text: { content: 'From manual chaos to AI precision.', position: 'bottom', style: 'neon' }
+    }
+  },
+  { 
+    id: 'testimonial-1', 
+    name: 'Client Win', 
+    category: 'sales', 
+    preview: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    baseContent: {
+      background: { type: 'gradient', value: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
+      text: { content: "Omar's system doubled our lead flow in 30 days.", position: 'center', style: 'classic' }
+    }
+  },
+  { 
+    id: 'bts-1', 
+    name: 'Inside the Studio', 
+    category: 'behind-the-scenes', 
+    preview: 'linear-gradient(120deg, #f6d365 0%, #fda085 100%)',
+    baseContent: {
+      background: { type: 'gradient', value: 'linear-gradient(120deg, #f6d365 0%, #fda085 100%)' },
+      text: { content: 'Building the future of marketing agents.', position: 'bottom', style: 'modern' }
+    }
+  }
+]
+
+export default function StoriesGeneratorPage() {
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>(TEMPLATES[0].id)
+  const [currentStory, setCurrentStory] = useState<StoryContent>(TEMPLATES[0].baseContent as StoryContent)
+  const [generating, setGenerating] = useState(false)
+  const [engagementScore, setEngagementScore] = useState(88)
+
+  const handleSelectTemplate = (template: StoryTemplate) => {
+    setSelectedTemplateId(template.id)
+    setCurrentStory(template.baseContent as StoryContent)
+  }
+
+  const handleGenerateSeries = async (type: string) => {
+    setGenerating(true)
+    // Simulate AI generation
+    setTimeout(() => {
+      setGenerating(false)
+      // In a real app, this would call the API and update the sequence
+    }, 2000)
+  }
+
+  const updateStory = (updates: Partial<StoryContent>) => {
+    setCurrentStory(prev => ({ ...prev, ...updates }))
+    // Slightly randomize engagement score on change for feedback feel
+    setEngagementScore(Math.min(100, Math.max(70, 85 + Math.floor(Math.random() * 10))))
   }
 
   return (
-    <div className="space-y-8 pb-12 w-full animate-in fade-in duration-700 font-sans">
+    <div className="flex flex-col h-[calc(100vh-120px)]">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">Stories & Angles</h1>
-          <p className="text-[#A1A1AA] text-base max-w-xl">
-            Discover which narratives and angles drive the most engagement and sales.
-          </p>
+          <h1 className="text-3xl font-black text-white flex items-center gap-3">
+            <Sparkles className="w-8 h-8 text-pink-500 fill-pink-500/20" />
+            Stories AI Generator
+          </h1>
+          <p className="text-[#6B7280] mt-1">Design, generate and schedule high-converting stories instantly.</p>
         </div>
-
-        <Button className="bg-white text-black hover:bg-[#E5E7EB] transition-colors rounded-lg px-4 h-9 text-xs font-semibold">
-          <RefreshCw className="w-3.5 h-3.5 mr-2" />
-          Re-analyze
-        </Button>
+        <div className="flex gap-3">
+          <Button variant="outline" className="border-[#262626] bg-[#171717] text-white hover:bg-[#1A1A1A]">
+            <Send className="w-4 h-4 mr-2" />
+            Export Assets
+          </Button>
+          <Button className="bg-pink-600 hover:bg-pink-700 text-white font-bold">
+            <Calendar className="w-4 h-4 mr-2" />
+            Schedule Story
+          </Button>
+        </div>
       </div>
 
-      {/* Info Banner */}
-      <div className="bg-[#141414] border border-[#8B5CF6]/20 rounded-xl overflow-hidden shadow-sm relative">
-        <div className="absolute top-0 left-0 bottom-0 w-1 bg-[#8B5CF6]/50" />
-        <div className="p-6">
-          <div className="flex items-start gap-4">
-            <div className="p-2.5 rounded-md bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 flex-shrink-0">
-              <BookOpen className="w-5 h-5 text-[#8B5CF6]" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-white mb-1.5 text-sm">Understanding Story Patterns</h3>
-              <p className="text-sm text-[#A1A1AA] leading-relaxed max-w-4xl">
-                We analyzed your last 90 days of content to identify which narrative types and storytelling angles 
-                generate the most engagement and revenue. Use this data to create more of what works instead of guessing.
-              </p>
+      <div className="flex-1 grid grid-cols-1 xl:grid-cols-12 gap-8 min-h-0">
+        {/* Left: Toolbar & Templates */}
+        <div className="xl:col-span-4 flex flex-col gap-6 overflow-y-auto pr-4 scrollbar-hide">
+          <Tabs defaultValue="templates" className="w-full">
+            <TabsList className="bg-[#171717] border border-[#262626] p-1 w-full h-12">
+              <TabsTrigger value="templates" className="flex-1 text-xs font-bold gap-2">
+                <Layout className="w-3.5 h-3.5" /> Templates
+              </TabsTrigger>
+              <TabsTrigger value="customize" className="flex-1 text-xs font-bold gap-2">
+                <Settings className="w-3.5 h-3.5" /> Customize
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="templates" className="mt-6 space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                {TEMPLATES.map(t => (
+                  <StoryTemplateCard 
+                    key={t.id} 
+                    template={t} 
+                    isSelected={selectedTemplateId === t.id}
+                    onClick={() => handleSelectTemplate(t)}
+                  />
+                ))}
+              </div>
+              
+              <SeriesGenerator onGenerate={handleGenerateSeries} loading={generating} />
+            </TabsContent>
+
+            <TabsContent value="customize" className="mt-6 space-y-8 pb-10">
+              {/* Background */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-bold text-[#6B7280] uppercase tracking-widest flex items-center gap-2">
+                    <Palette className="w-3.5 h-3.5" /> Background
+                  </h3>
+                  <div className="flex gap-1">
+                    {['#000', '#FF0080', '#7928CA', '#30cfd0'].map(c => (
+                      <button 
+                        key={c}
+                        onClick={() => updateStory({ background: { type: 'solid', value: c } })}
+                        className="w-5 h-5 rounded-full border border-neutral-700" 
+                        style={{ backgroundColor: c }} 
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                   <Button variant="outline" size="sm" className="bg-neutral-950 border-[#262626] text-[10px] h-8">Solid</Button>
+                   <Button variant="outline" size="sm" className="bg-neutral-950 border-[#262626] text-[10px] h-8">Gradient</Button>
+                </div>
+              </div>
+
+              {/* Text */}
+              <div className="space-y-4">
+                <h3 className="text-xs font-bold text-[#6B7280] uppercase tracking-widest flex items-center gap-2">
+                  <Type className="w-3.5 h-3.5" /> Text Content
+                </h3>
+                <textarea 
+                  value={currentStory.text.content}
+                  onChange={(e) => updateStory({ text: { ...currentStory.text, content: e.target.value } })}
+                  className="w-full bg-neutral-950 border border-[#262626] rounded-xl p-4 text-sm text-white focus:outline-none focus:border-pink-500 min-h-[100px]"
+                />
+                <div className="flex gap-2">
+                   {['modern', 'neon', 'minimal', 'classic'].map(style => (
+                     <Button 
+                      key={style}
+                      onClick={() => updateStory({ text: { ...currentStory.text, style: style as any } })}
+                      variant="outline" 
+                      size="sm" 
+                      className={cn(
+                        "flex-1 text-[10px] h-8 capitalize",
+                        currentStory.text.style === style ? "bg-pink-600/10 border-pink-500 text-pink-500" : "bg-neutral-950 border-[#262626]"
+                      )}
+                    >
+                       {style}
+                     </Button>
+                   ))}
+                </div>
+              </div>
+
+              {/* Stickers */}
+              <div className="space-y-4">
+                <h3 className="text-xs font-bold text-[#6B7280] uppercase tracking-widest flex items-center gap-2">
+                  <Smile className="w-3.5 h-3.5" /> Add Interactive Sticker
+                </h3>
+                <StickerPicker 
+                  selectedType={currentStory.sticker?.type} 
+                  onSelect={(type) => updateStory({ sticker: { type, question: 'Your question here...', options: type === 'poll' ? ['YES', 'NO'] : undefined } })} 
+                />
+                {currentStory.sticker && (
+                  <div className="bg-[#171717]/50 p-4 rounded-xl border border-[#262626] space-y-4">
+                    <input 
+                      className="w-full bg-transparent border-b border-[#262626] text-white text-sm pb-2 focus:outline-none focus:border-pink-500" 
+                      placeholder="Sticker Question..."
+                      value={currentStory.sticker.question}
+                      onChange={(e) => updateStory({ sticker: { ...currentStory.sticker!, question: e.target.value } })}
+                    />
+                    {currentStory.sticker.type === 'poll' && (
+                      <div className="grid grid-cols-2 gap-2">
+                        <input className="bg-neutral-950 border border-[#262626] rounded-lg p-2 text-xs text-white" placeholder="Opt 1" defaultValue="YES" />
+                        <input className="bg-neutral-950 border border-[#262626] rounded-lg p-2 text-xs text-white" placeholder="Opt 2" defaultValue="NO" />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        {/* Center: Preview */}
+        <div className="xl:col-span-5 flex flex-col items-center justify-center bg-[#171717]/40 rounded-[40px] border border-[#262626] relative overflow-hidden group">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(219,39,119,0.05),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+          
+          <PhoneMockup story={currentStory} />
+          
+          <div className="mt-8 flex gap-8">
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mb-1">Preview Style</span>
+              <div className="flex gap-2">
+                <div className="w-3 h-3 rounded-full bg-pink-500" />
+                <div className="w-3 h-3 rounded-full bg-[#1A1A1A]" />
+                <div className="w-3 h-3 rounded-full bg-[#1A1A1A]" />
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Story Patterns */}
-      <StoryPatternsView patterns={storyData.patterns} insights={storyData.insights} />
+        {/* Right: AI Intelligence */}
+        <div className="xl:col-span-3 flex flex-col gap-6">
+          <Card className="bg-[#171717] border-[#262626] shadow-xl">
+             <CardHeader className="pb-2">
+               <CardTitle className="text-white text-lg font-bold flex items-center justify-between">
+                 Engagement Score
+                 <div className="w-10 h-10 rounded-full border-2 border-pink-500 flex items-center justify-center text-[10px] font-black">
+                   {engagementScore}%
+                 </div>
+               </CardTitle>
+               <CardDescription>AI prediction based on current content</CardDescription>
+             </CardHeader>
+             <CardContent className="space-y-4">
+               <div className="h-2 w-full bg-[#1A1A1A] rounded-full overflow-hidden">
+                 <div className="h-full bg-pink-500 transition-all duration-1000" style={{ width: `${engagementScore}%` }} />
+               </div>
+               <div className="space-y-3">
+                 <div className="flex items-start gap-2 text-xs text-[#6B7280]">
+                    <TrendingUp className="w-4 h-4 text-green-500 shrink-0" />
+                    <span>Hook copy triggers curiosity effectively.</span>
+                 </div>
+                 <div className="flex items-start gap-2 text-xs text-[#6B7280]">
+                    <Zap className="w-4 h-4 text-yellow-500 shrink-0" />
+                    <span>Interactive poll increases reach algorithmically.</span>
+                 </div>
+               </div>
+               <Button className="w-full mt-4 bg-white text-black hover:bg-neutral-200 font-bold h-10">
+                 Enhance with AI
+               </Button>
+             </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-neutral-900 to-neutral-950 border-[#262626]">
+            <CardHeader className="pb-4">
+              <h3 className="text-xs font-bold text-[#6B7280] uppercase tracking-widest">Growth Series</h3>
+              <p className="text-white font-bold">Auto-Generate Series</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+               <p className="text-xs text-[#4B5563] leading-relaxed">
+                 Generate a sequence of 7 daily stories designed to convert followers into leads automatically.
+               </p>
+               <Button className="w-full bg-[#1A1A1A] hover:bg-[#262626] text-white border-0 h-10">
+                 <Plus className="w-4 h-4 mr-2" />
+                 Create New Series
+               </Button>
+            </CardContent>
+          </Card>
+
+          <div className="p-6 bg-pink-600/10 border border-pink-500/20 rounded-3xl">
+             <div className="flex items-center gap-3 mb-3">
+               <div className="p-2 bg-pink-500 rounded-xl">
+                 <Music className="w-4 h-4 text-white" />
+               </div>
+               <span className="text-sm font-bold text-white">Smart Audio Hook</span>
+             </div>
+             <p className="text-[10px] text-[#6B7280] uppercase font-black tracking-widest">Recommendation</p>
+             <p className="text-xs text-[#9CA3AF] mt-1">Use "Lofi Beats - Study Session" for maximum retention on this specific copy.</p>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { HoverBorderGradient } from '@/components/ui/hover-border-gradient'
 import { Terminal, Rocket } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -80,19 +81,20 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4"
+          className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-4"
         >
-          <Button
-            size="lg"
-            className="group relative overflow-hidden bg-gradient-to-r from-primary-500 to-secondary-500 text-neutral-950 px-8 py-6 text-lg font-semibold shadow-2xl shadow-primary-500/50 hover:shadow-primary-500/80 transition-all duration-300"
+          <HoverBorderGradient
+            containerClassName="rounded-full"
+            as="button"
+            className="dark:bg-black bg-white text-black dark:text-white flex items-center space-x-2 px-8 py-3 text-lg font-bold"
           >
-            <span className="relative z-10 flex items-center gap-2">
+            <span className="flex items-center gap-2">
               Empezar Trial 7 Días Gratis
-              <Rocket className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              <Rocket className="w-5 h-5" />
             </span>
-          </Button>
+          </HoverBorderGradient>
 
-          <Button size="lg" variant="secondary" className="px-8 py-6 text-lg">
+          <Button size="lg" variant="secondary" className="px-8 py-6 text-lg rounded-full">
             Ver Demo en Vivo
           </Button>
         </motion.div>
