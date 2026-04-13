@@ -8,10 +8,8 @@ const nextConfig = {
   turbopack: {
     root: __dirname,
   },
-  experimental: {
-    skipMiddlewareUrlNormalize: true,
-    skipTrailingSlashRedirect: true,
-  },
+  skipMiddlewareUrlNormalize: true,
+  skipTrailingSlashRedirect: true,
   staticPageGenerationTimeout: 180,
   onDemandEntries: {
     maxInactiveAge: 60 * 1000,
