@@ -3,12 +3,13 @@ import { anthropic, DEFAULT_CONFIG } from '@/lib/agents/anthropic-client'
 import { AGENT_CEO_SYSTEM_PROMPT, generateCEOPrompt } from '@/lib/agents/prompts/agent-ceo'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
-
 export async function POST(request: NextRequest) {
   try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    const supabase = supabaseUrl && supabaseServiceKey
+      ? createClient(supabaseUrl, supabaseServiceKey)
+      : null
     const body = await request.json()
     const { launchId, productName, productType, price, targetAudience, launchDate } = body
 
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Guardar en base de datos si existe launchId
-    if (launchId) {
+    if (launchId && supabase) {
       const { error: dbError } = await supabase
         .from('agent_generations')
         .insert({
