@@ -12,13 +12,10 @@ export default function LoginPage() {
 
   useEffect(() => {
     setMounted(true)
-    
-    // Check if there is already a session
-    supabase.auth.getSession().then(({ data: { session } }: any) => {
-      if (session) {
-        router.push('/dashboard')
-      }
-    })
+
+    // Skip auth and go directly to dashboard
+    router.push('/dashboard')
+    return
 
     const {
       data: { subscription },
@@ -97,7 +94,7 @@ export default function LoginPage() {
           }
         }}
         theme="dark"
-        providers={['google']}
+        providers={[]}
         redirectTo={`${typeof window !== 'undefined' ? window.location.origin : ''}/auth/callback`}
         localization={{
           variables: {
