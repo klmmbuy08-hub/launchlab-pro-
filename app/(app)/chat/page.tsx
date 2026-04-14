@@ -128,7 +128,7 @@ export default function ChatPage() {
             ))}
           </div>
           <div className="p-4 border-t border-neutral-800 bg-neutral-950/50">
-            <Button variant="outline" className="w-full border-neutral-800 text-neutral-400 hover:text-white flex items-center gap-2">
+            <Button className="w-full border-neutral-800 text-neutral-400 hover:text-white flex items-center gap-2">
               <Plus className="w-4 h-4" />
               Start Multi-Agent Debate
             </Button>

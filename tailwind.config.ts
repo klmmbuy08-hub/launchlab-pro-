@@ -104,39 +104,45 @@ const config: Config = {
             inverted: '#000000',
           },
         },
-        // Existing colors
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+        // Existing colors - using hsl values from CSS variables
+        border: {
+          DEFAULT: 'hsl(0 0% 89.8%)',
+          border: 'hsl(0 0% 89.8%)',
+        },
+        input: 'hsl(0 0% 89.8%)',
+        ring: 'hsl(0 0% 3.9%)',
+        background: {
+          DEFAULT: 'hsl(0 0% 100%)',
+          background: 'hsl(0 0% 100%)',
+        },
+        foreground: 'hsl(0 0% 3.9%)',
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+          DEFAULT: 'hsl(0 0% 9%)',
+          foreground: 'hsl(0 0% 98%)',
         },
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+          DEFAULT: 'hsl(0 0% 96.1%)',
+          foreground: 'hsl(0 0% 9%)',
         },
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
+          DEFAULT: 'hsl(0 84.2% 60.2%)',
+          foreground: 'hsl(0 0% 98%)',
         },
         muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
+          DEFAULT: 'hsl(0 0% 96.1%)',
+          foreground: 'hsl(0 0% 45.1%)',
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
+          DEFAULT: 'hsl(0 0% 96.1%)',
+          foreground: 'hsl(0 0% 9%)',
         },
         popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+          DEFAULT: 'hsl(0 0% 100%)',
+          foreground: 'hsl(0 0% 3.9%)',
         },
         card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
+          DEFAULT: 'hsl(0 0% 100%)',
+          foreground: 'hsl(0 0% 3.9%)',
         },
       },
       borderRadius: {

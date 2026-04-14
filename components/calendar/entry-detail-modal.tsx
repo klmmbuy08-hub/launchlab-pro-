@@ -85,7 +85,7 @@ export function EntryDetailModal({
             <div className="flex items-center justify-between mb-2">
               <h4 className="text-sm font-semibold text-neutral-300">Caption Hook</h4>
               <Button
-                variant="outline"
+               
                 size="sm"
                 onClick={handleCopy}
                 className="border-neutral-700"
@@ -167,7 +167,7 @@ export function EntryDetailModal({
               <Sparkles className="w-4 h-4 mr-2" />
               Generate Full Content
             </Button>
-            <Button variant="outline" className="border-neutral-700">
+            <Button className="border-neutral-700">
               <ExternalLink className="w-4 h-4 mr-2" />
               Schedule in Meta
             </Button>

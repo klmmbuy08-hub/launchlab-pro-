@@ -126,11 +126,10 @@ export default function CalendarPage() {
           <span className="text-sm font-medium text-[#6B7280] mr-2">Filter:</span>
           <div className="flex gap-2">
             {['all', 'reel', 'carousel', 'post', 'story'].map(t => (
-              <Badge 
+              <Badge
                 key={t}
-                variant={filter === t ? 'default' : 'outline'}
                 className={`cursor-pointer capitalize px-3 py-1 transition-all ${
-                  filter === t 
+                  filter === t
                     ? t === 'reel' ? 'bg-blue-600 hover:bg-blue-500' :
                       t === 'carousel' ? 'bg-purple-600 hover:bg-purple-500' :
                       t === 'post' ? 'bg-green-600 hover:bg-green-500' :

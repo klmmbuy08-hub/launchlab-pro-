@@ -182,7 +182,7 @@ export default function StrategyPage() {
                     <Zap className="w-4 h-4 mr-2" />
                     Approve & Push to Calendar
                   </Button>
-                  <Button variant="outline" className="border-neutral-700 text-neutral-300">
+                  <Button className="border-neutral-700 text-neutral-300">
                     <ShieldCheck className="w-4 h-4 mr-2" />
                     Export Brief for Team
                   </Button>

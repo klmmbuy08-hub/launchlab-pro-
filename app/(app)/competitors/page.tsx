@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Target, BarChart2, Zap, Info, ShieldCheck, Trophy, ArrowRight } from 'lucide-react'
+import { Plus, Target, BarChart2, Zap, Info, ShieldCheck, Trophy, ArrowRight, TrendingUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CompetitorCard } from '@/components/business/CompetitorCard'
 import { BenchmarkTable } from '@/components/business/BenchmarkTable'
 import { GapAnalysisCard } from '@/components/business/GapAnalysisCard'
@@ -17,6 +18,7 @@ export default function CompetitorsPage() {
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedCompetitor, setSelectedCompetitor] = useState<any>(null)
+  const { addToast } = useToast()
 
   useEffect(() => {
     fetchData()
@@ -36,7 +38,7 @@ export default function CompetitorsPage() {
       }
     } catch (error) {
       console.error('Fetch error:', error)
-      toast({ title: "Connection Error", description: "Could not sync competitor data.", variant: "destructive" })
+      addToast("Could not sync competitor data.", "error")
     } finally {
       setLoading(false)
     }
@@ -51,13 +53,13 @@ export default function CompetitorsPage() {
       })
       const result = await response.json()
       if (result.success) {
-        toast({ title: "Analysis Started", description: `We are now tracking @${username}.` })
+        addToast(`We are now tracking @${username}.`, "success")
         fetchData()
       } else {
-        toast({ title: "Track Error", description: result.error, variant: "destructive" })
+        addToast(result.error, "error")
       }
     } catch (error) {
-       toast({ title: "Error", description: "Failed to connect to monitoring service.", variant: "destructive" })
+      addToast("Failed to connect to monitoring service.", "error")
     }
   }
 

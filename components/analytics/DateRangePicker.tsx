@@ -92,7 +92,7 @@ export default function DateRangePicker({ value, onChange }: DateRangePickerProp
             </Button>
             <Button
               size="sm"
-              variant="outline"
+             
               onClick={() => setShowCustom(false)}
               className="flex-1 border-neutral-700"
             >

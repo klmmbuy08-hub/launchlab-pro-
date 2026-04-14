@@ -1,4 +1,4 @@
-import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline'
+import { ArrowUp, ArrowDown } from 'lucide-react'
 
 interface StatsCardProps {
   title: string
@@ -23,9 +23,9 @@ export function StatsCard({ title, value, change, trend = 'neutral', icon }: Sta
   const getTrendIcon = () => {
     switch (trend) {
       case 'up':
-        return <ArrowUpIcon className="w-4 h-4" />
+        return <ArrowUp className="w-4 h-4" />
       case 'down':
-        return <ArrowDownIcon className="w-4 h-4" />
+        return <ArrowDown className="w-4 h-4" />
       default:
         return null
     }

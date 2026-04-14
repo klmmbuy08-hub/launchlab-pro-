@@ -73,7 +73,7 @@ export function GoalsTracker({ goals, current, onUpdateGoals }: GoalsTrackerProp
           </CardTitle>
           {!isEditing ? (
             <Button
-              variant="outline"
+             
               size="sm"
               onClick={() => setIsEditing(true)}
               className="border-neutral-700"
@@ -84,7 +84,7 @@ export function GoalsTracker({ goals, current, onUpdateGoals }: GoalsTrackerProp
           ) : (
             <div className="flex gap-2">
               <Button
-                variant="outline"
+               
                 size="sm"
                 onClick={handleCancel}
                 className="border-neutral-700"

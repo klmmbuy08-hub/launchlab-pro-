@@ -48,7 +48,7 @@ export function CampaignCard({ campaign, onClick, onTogglePause }: CampaignCardP
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-1.5">
             <h3 className="font-semibold text-white truncate max-w-[200px] sm:max-w-xs">{campaign.name}</h3>
-            <Badge variant="outline" className={`${statusColors[campaign.status]} text-[9px] uppercase font-bold tracking-widest`}>
+            <Badge className={`${statusColors[campaign.status]} text-[9px] uppercase font-bold tracking-widest`}>
               {campaign.status}
             </Badge>
           </div>

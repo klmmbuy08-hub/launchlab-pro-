@@ -61,7 +61,7 @@ export default function LandingPage() {
               </Button>
             </Link>
             <Link href="/launches">
-              <Button variant="outline" size="lg" className="border-neutral-700 text-neutral-300 hover:bg-neutral-900">
+              <Button size="lg" className="border-neutral-700 text-neutral-300 hover:bg-neutral-900">
                 Ver lanzamientos
               </Button>
             </Link>

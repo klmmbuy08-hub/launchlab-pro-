@@ -449,7 +449,7 @@ export function generateCOOPrompt(task: 'budget' | 'cashflow' | 'roi' | 'forecas
 `
 
   if (task === 'budget') {
-    return \`\${baseContext}
+    return `${baseContext}
 
 ## TAREA: PRESUPUESTO OPTIMIZADO
 
@@ -474,7 +474,7 @@ Responde SOLO con el JSON. Sin texto adicional.\`
   }
 
   if (task === 'cashflow') {
-    return \`\${baseContext}
+    return `${baseContext}
 
 ## TAREA: CASH FLOW (30 días)
 
@@ -496,7 +496,7 @@ Responde SOLO con el JSON. Sin texto adicional.\`
   }
 
   if (task === 'roi') {
-    return \`\${baseContext}
+    return `${baseContext}
 
 ## TAREA: ROI POR CANAL
 
@@ -524,7 +524,7 @@ Responde SOLO con el JSON. Sin texto adicional.\`
   }
 
   // Forecast
-  return \`\${baseContext}
+  return `${baseContext}
 
 ## TAREA: PROYECCIONES FINANCIERAS (30 días)
 

@@ -381,7 +381,7 @@ export function generateCDOPrompt(task: 'youtube' | 'reels' | 'webinar' | 'stori
 `
 
   if (task === 'youtube') {
-    return \`\${baseContext}
+    return `${baseContext}
 
 ## TAREA: SCRIPT DE YOUTUBE
 
@@ -401,11 +401,11 @@ Optimiza para:
 - 60% Retención (que vean todo)
 - 40% SEO (que lo encuentren)
 
-Responde SOLO con el JSON. Sin texto adicional.\`
+Responde SOLO con el JSON. Sin texto adicional.`
   }
 
   if (task === 'reels') {
-    return \`\${baseContext}
+    return `${baseContext}
 
 ## TAREA: SECUENCIA DE REELS (30 días)
 
@@ -428,11 +428,11 @@ Para cada reel:
 - Mejor hora de publicación
 - Qué trend aprovecha + por qué funciona
 
-Responde SOLO con el JSON. Sin texto adicional.\`
+Responde SOLO con el JSON. Sin texto adicional.`
   }
 
   if (task === 'webinar') {
-    return \`\${baseContext}
+    return `${baseContext}
 
 ## TAREA: SCRIPT DE WEBINAR (90 minutos)
 
@@ -453,11 +453,11 @@ Incluye:
 - Momentos de engagement (polls, preguntas)
 - 5 preguntas planeadas + respuestas
 
-Responde SOLO con el JSON. Sin texto adicional.\`
+Responde SOLO con el JSON. Sin texto adicional.`
   }
 
   // Stories
-  return \`\${baseContext}
+  return `${baseContext}
 
 ## TAREA: STORIES DIARIAS (7 stories/día x 30 días)
 
@@ -468,5 +468,5 @@ Crea una estrategia de Stories con:
 - Stickers interactivos apropiados
 - Objetivos claros de cada story
 
-Responde SOLO con el JSON. Sin texto adicional.\`
+Responde SOLO con el JSON. Sin texto adicional.`
 }

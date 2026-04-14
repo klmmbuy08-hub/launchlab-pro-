@@ -63,7 +63,7 @@ export function StoryPatternsView({ patterns, insights }: StoryPatternsViewProps
                     </div>
                     <h3 className="text-base font-semibold text-white tracking-tight">{pattern.narrative_type}</h3>
                   </div>
-                  <Badge variant="outline" className={isTop ? 'border-[#10B981]/30 text-[#10B981] bg-[#10B981]/10 text-[10px] uppercase font-bold tracking-widest' : 'border-[#3F3F46] text-[#A1A1AA] bg-[#1F1F1F] text-[10px] uppercase font-bold tracking-widest'}>
+                  <Badge className={isTop ? 'border-[#10B981]/30 text-[#10B981] bg-[#10B981]/10 text-[10px] uppercase font-bold tracking-widest' : 'border-[#3F3F46] text-[#A1A1AA] bg-[#1F1F1F] text-[10px] uppercase font-bold tracking-widest'}>
                     {pattern.frequency} posts
                   </Badge>
                 </div>

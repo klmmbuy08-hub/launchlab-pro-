@@ -74,7 +74,7 @@ export default function LeadsPage() {
           <Search className="w-4 h-4 absolute left-3 top-3 text-[#6B7280]" />
           <input type="text" placeholder="Search leads..." className="w-full pl-10 pr-4 py-2 bg-[#171717] border border-[#262626] rounded-lg text-white" />
         </div>
-        <Button variant="outline"><Filter className="w-4 h-4 mr-2" />Filter</Button>
+        <Button><Filter className="w-4 h-4 mr-2" />Filter</Button>
       </div>
 
       <Tabs defaultValue="all" className="space-y-6">

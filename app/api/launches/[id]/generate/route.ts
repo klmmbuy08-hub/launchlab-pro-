@@ -4,15 +4,16 @@ import { getLaunchById } from '@/lib/db/launches'
 // SSE (Server-Sent Events) para progreso en tiempo real
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const encoder = new TextEncoder()
 
   const stream = new ReadableStream({
     async start(controller) {
       try {
         // Obtener lanzamiento
-        const launch = await getLaunchById(params.id)
+        const launch = await getLaunchById(id)
 
         // Función para enviar evento
         const sendEvent = (event: string, data: any) => {

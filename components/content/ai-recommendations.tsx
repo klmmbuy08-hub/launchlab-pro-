@@ -77,7 +77,7 @@ export function AIRecommendations({ recommendations }: AIRecommendationsProps) {
 
               {rec.action && (
                 <Button 
-                  variant="outline" 
+                  
                   className="shrink-0 bg-[#0A0A0A] border-[#27272A] text-[#E5E7EB] hover:bg-[#1A1A1A] hover:border-[#3F3F46] transition-all h-9 px-4 text-xs font-medium"
                 >
                   {rec.action}

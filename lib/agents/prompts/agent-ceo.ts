@@ -231,11 +231,11 @@ export function generateCEOPrompt(data: {
   price: number
   targetAudience: string
   launchDate?: string
-  budget: number
-  experienceLevel: string
-  currentAudience: string
-  tone: string
-  riskTolerance: string
+  budget?: number
+  experienceLevel?: string
+  currentAudience?: string
+  tone?: string
+  riskTolerance?: string
   mainProblem?: string
   uniqueValue?: string
 }) {
@@ -251,10 +251,10 @@ ${data.mainProblem ? `- **Problema que resuelve:** ${data.mainProblem}` : ''}
 ${data.uniqueValue ? `- **Valor único:** ${data.uniqueValue}` : ''}
 
 ## CONTEXTO DEL USUARIO
-- **Presupuesto total:** $${data.budget}
-- **Nivel de experiencia:** ${data.experienceLevel}
-- **Audiencia actual:** ${data.currentAudience}
-- **Tolerancia al riesgo:** ${data.riskTolerance}
+- **Presupuesto total:** $${data.budget || 5000}
+- **Nivel de experiencia:** ${data.experienceLevel || 'Intermedio'}
+- **Audiencia actual:** ${data.currentAudience || 'Por determinar'}
+- **Tolerancia al riesgo:** ${data.riskTolerance || 'Moderada'}
 
 ## TU TAREA
 Genera:

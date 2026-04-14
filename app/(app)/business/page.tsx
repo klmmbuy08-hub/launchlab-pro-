@@ -82,11 +82,11 @@ export default function BusinessPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+          <Button size="sm">
             <Filter className="w-4 h-4 mr-2" />
             Jan 1 - Jan 31
           </Button>
-          <Button variant="outline" size="sm">
+          <Button size="sm">
             Download Report
           </Button>
         </div>
@@ -279,7 +279,7 @@ export default function BusinessPage() {
             <CardTitle className="text-white">Active Ad Campaigns</CardTitle>
             <CardDescription>Performance of your Meta Ads</CardDescription>
           </div>
-          <Button variant="outline" size="sm">
+          <Button size="sm">
             <Megaphone className="w-4 h-4 mr-2" />
             Manage Ads
           </Button>

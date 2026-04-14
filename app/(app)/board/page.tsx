@@ -111,7 +111,7 @@ export default function VoiceBoardPage() {
       <div className="flex items-center gap-6">
         <Button
           size="lg"
-          variant="outline"
+         
           className="w-16 h-16 rounded-full border-neutral-800 bg-neutral-900 hover:bg-neutral-800 text-white shadow-xl"
           onClick={() => {
             const agents: Array<'CEO' | 'CMO' | 'SALES'> = ['CEO', 'CMO', 'SALES']
@@ -136,7 +136,7 @@ export default function VoiceBoardPage() {
 
         <Button
           size="lg"
-          variant="outline"
+         
           disabled={isSpeaking}
           className={`w-16 h-16 rounded-full border-neutral-800 bg-neutral-900 text-white shadow-xl ${
             isListening ? 'border-red-500 text-red-500' : ''

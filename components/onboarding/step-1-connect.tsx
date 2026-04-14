@@ -37,7 +37,7 @@ export function Step1Connect({ data, updateData }: StepProps) {
         </Button>
 
         <Button
-          variant="outline"
+         
           className="h-16 justify-between px-6 border-neutral-800 opacity-50 cursor-not-allowed"
           disabled
         >
@@ -53,7 +53,7 @@ export function Step1Connect({ data, updateData }: StepProps) {
         </Button>
 
         <Button
-          variant="outline"
+         
           className="h-16 justify-between px-6 border-neutral-800 opacity-50 cursor-not-allowed"
           disabled
         >

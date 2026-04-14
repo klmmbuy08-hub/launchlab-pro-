@@ -67,7 +67,7 @@ export function AlertsFeed({ alerts }: AlertsFeedProps) {
           <AlertTriangle className="w-4 h-4 text-[#F59E0B]" />
           Alerts & Notifications
         </h3>
-        <Badge variant="outline" className="border-[#27272A] bg-[#141414] text-[#A1A1AA] rounded-md h-6">
+        <Badge className="border-[#27272A] bg-[#141414] text-[#A1A1AA] rounded-md h-6">
           {alerts.length} New
         </Badge>
       </div>
@@ -88,7 +88,7 @@ export function AlertsFeed({ alerts }: AlertsFeedProps) {
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2">
                         <div className="flex items-center gap-3">
                           <h4 className="font-semibold text-white text-sm truncate">{alert.title}</h4>
-                          <Badge variant="outline" className={`${config.badge} text-[9px] uppercase font-bold tracking-widest`}>
+                          <Badge className={`${config.badge} text-[9px] uppercase font-bold tracking-widest`}>
                             {alert.type}
                           </Badge>
                         </div>
@@ -102,7 +102,7 @@ export function AlertsFeed({ alerts }: AlertsFeedProps) {
                       {alert.action && (
                         <Button 
                           size="sm" 
-                          variant="outline" 
+                          
                           className="h-8 bg-[#0A0A0A] border-[#27272A] hover:bg-[#1A1A1A] hover:text-white text-xs font-semibold px-4 transition-colors text-[#E5E7EB]"
                         >
                           {alert.action}

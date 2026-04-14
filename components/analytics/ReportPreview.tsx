@@ -161,7 +161,7 @@ export default function ReportPreview({
               </Button>
               <Button
                 onClick={() => onExport('csv')}
-                variant="outline"
+               
                 className="flex-1 border-neutral-700"
               >
                 <Download className="w-4 h-4 mr-2" />

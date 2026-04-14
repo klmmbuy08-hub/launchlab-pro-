@@ -29,7 +29,7 @@ export function PostCard({ post }: PostCardProps) {
       className={`p-1.5 rounded border text-[10px] truncate flex items-center gap-1.5 transition-all hover:scale-[1.02] cursor-pointer ${colors[post.content_type] || 'bg-neutral-800 border-neutral-700 text-neutral-400'}`}
     >
       <Icon className="w-3 h-3 flex-shrink-0" />
-      <span className="truncate">{post.topic || 'No Title'}</span>
+      <span className="truncate">{post.caption || 'No Title'}</span>
       {post.ai_generated && <Sparkles className="w-2.5 h-2.5 ml-auto text-purple-400 flex-shrink-0" />}
     </div>
   )

@@ -79,7 +79,7 @@ export function CompetitorAnalysisView({ analysis }: CompetitorAnalysisViewProps
             <p className="text-[10px] uppercase font-bold tracking-widest text-[#71717A] mb-3">Primary Themes:</p>
             <div className="flex flex-wrap gap-2">
               {analysis.content_strategy.primary_themes.map((theme, idx) => (
-                <Badge key={idx} variant="outline" className="border-[#3F3F46] text-[#A1A1AA] bg-[#1F1F1F]">
+                <Badge key={idx} className="border-[#3F3F46] text-[#A1A1AA] bg-[#1F1F1F]">
                   {theme}
                 </Badge>
               ))}
@@ -90,7 +90,7 @@ export function CompetitorAnalysisView({ analysis }: CompetitorAnalysisViewProps
             <p className="text-[10px] uppercase font-bold tracking-widest text-[#71717A] mb-3">Best Formats:</p>
             <div className="flex flex-wrap gap-2">
               {analysis.content_strategy.best_performing_formats.map((format, idx) => (
-                <Badge key={idx} variant="outline" className="border-[#3B82F6]/30 text-[#3B82F6] bg-[#3B82F6]/5">
+                <Badge key={idx} className="border-[#3B82F6]/30 text-[#3B82F6] bg-[#3B82F6]/5">
                   {format}
                 </Badge>
               ))}
@@ -118,7 +118,7 @@ export function CompetitorAnalysisView({ analysis }: CompetitorAnalysisViewProps
             <Lightbulb className="w-4 h-4 text-[#F59E0B]" />
             Gaps & Opportunities
           </h3>
-          <Button variant="outline" size="sm" className="h-8 border-[#27272A] bg-[#0A0A0A] hover:bg-[#1A1A1A] text-[#A1A1AA]">
+          <Button size="sm" className="h-8 border-[#27272A] bg-[#0A0A0A] hover:bg-[#1A1A1A] text-[#A1A1AA]">
             <Download className="w-3.5 h-3.5 mr-2" />
             <span className="text-xs">Export</span>
           </Button>
@@ -128,7 +128,7 @@ export function CompetitorAnalysisView({ analysis }: CompetitorAnalysisViewProps
             <div key={idx} className="bg-[#0A0A0A] border border-[#27272A] rounded-lg p-5">
               <div className="flex items-start justify-between mb-3">
                 <h4 className="font-semibold text-white text-sm">{gap.topic}</h4>
-                <Badge variant="outline" className={`${difficultyColors[gap.difficulty]} uppercase text-[9px] tracking-widest font-bold`}>
+                <Badge className={`${difficultyColors[gap.difficulty]} uppercase text-[9px] tracking-widest font-bold`}>
                   {gap.difficulty}
                 </Badge>
               </div>

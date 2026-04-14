@@ -30,7 +30,7 @@ export function Header() {
           <Settings className="w-5 h-5" />
         </Button>
         <Button
-          variant="outline"
+         
           size="sm"
           onClick={signOut}
           className="ml-2"

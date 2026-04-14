@@ -60,7 +60,7 @@ export default function OnboardingPage() {
         {/* Actions */}
         <div className="flex items-center justify-between max-w-4xl mx-auto pt-8 border-t border-neutral-800">
           <Button
-            variant="outline"
+           
             onClick={prevStep}
             disabled={currentStep === 1}
             className="border-neutral-700 hover:text-white"

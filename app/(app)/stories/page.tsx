@@ -140,7 +140,7 @@ export default function StoriesGeneratorPage() {
           <p className="text-[#6B7280] mt-1">Design, generate and schedule high-converting stories instantly.</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="border-[#262626] bg-[#171717] text-white hover:bg-[#1A1A1A]">
+          <Button className="border-[#262626] bg-[#171717] text-white hover:bg-[#1A1A1A]">
             <Send className="w-4 h-4 mr-2" />
             Export Assets
           </Button>
@@ -198,8 +198,8 @@ export default function StoriesGeneratorPage() {
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                   <Button variant="outline" size="sm" className="bg-neutral-950 border-[#262626] text-[10px] h-8">Solid</Button>
-                   <Button variant="outline" size="sm" className="bg-neutral-950 border-[#262626] text-[10px] h-8">Gradient</Button>
+                   <Button size="sm" className="bg-neutral-950 border-[#262626] text-[10px] h-8">Solid</Button>
+                   <Button size="sm" className="bg-neutral-950 border-[#262626] text-[10px] h-8">Gradient</Button>
                 </div>
               </div>
 
@@ -218,7 +218,7 @@ export default function StoriesGeneratorPage() {
                      <Button 
                       key={style}
                       onClick={() => updateStory({ text: { ...currentStory.text, style: style as any } })}
-                      variant="outline" 
+                      
                       size="sm" 
                       className={cn(
                         "flex-1 text-[10px] h-8 capitalize",

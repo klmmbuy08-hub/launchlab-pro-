@@ -3,13 +3,14 @@ import { supabase } from '@/lib/supabase/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const { data, error } = await supabase
       .from('agent_debates')
       .select('*')
-      .eq('launch_id', params.id)
+      .eq('launch_id', id)
       .order('created_at', { ascending: false })
 
     if (error) throw error
@@ -27,15 +28,16 @@ export async function GET(
 // Crear un debate (usado por el sistema cuando detecta desacuerdo)
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const body = await request.json()
+    const { id } = await params
 
     const { data, error } = await supabase
       .from('agent_debates')
       .insert({
-        launch_id: params.id,
+        launch_id: id,
         agents_involved: body.agents_involved,
         scenario: body.scenario,
         topic: body.topic,

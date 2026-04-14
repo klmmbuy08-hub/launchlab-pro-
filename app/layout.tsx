@@ -1,43 +1,27 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { ToastProvider } from "@/lib/toast/context";
-import { ToastContainer } from "@/components/ui/toast";
-import "./globals.css";
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import './globals.css'
+import { AuthProvider } from '@/lib/contexts/auth-context'
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: "LaunchLab Pro",
-  description: "Sistema de Adquisición con IA para Inmobiliarias",
-};
-
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+  title: 'LaunchOS - Business Intelligence for Coaches',
+  description: 'AI-powered business intelligence platform for coaches and info-product creators',
+}
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html
-      lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="h-full">
-        <ToastProvider>
+    <html lang="en">
+      <body className={inter.className}>
+        <AuthProvider>
           {children}
-          <ToastContainer />
-        </ToastProvider>
+        </AuthProvider>
       </body>
     </html>
-  );
+  )
 }

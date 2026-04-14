@@ -90,7 +90,7 @@ export function OptimizationRecommendations({
                           {rec.priority}
                         </Badge>
                         {rec.auto_executable && (
-                          <Badge variant="outline" className="border-[#10B981]/30 text-[#10B981] bg-[#10B981]/10 text-[9px] uppercase font-bold tracking-widest">
+                          <Badge className="border-[#10B981]/30 text-[#10B981] bg-[#10B981]/10 text-[9px] uppercase font-bold tracking-widest">
                             Auto
                           </Badge>
                         )}

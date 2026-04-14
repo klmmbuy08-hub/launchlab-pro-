@@ -61,10 +61,10 @@ export function UpcomingTasks({ tasks }: UpcomingTasksProps) {
                 <div className="flex-1 w-full min-w-0">
                   <p className="text-sm font-semibold text-white mb-2 truncate group-hover:text-[#10B981] transition-colors">{task.title}</p>
                   <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="outline" className={`${typeColors[task.type]} text-[9px] uppercase font-bold tracking-widest`}>
+                    <Badge className={`${typeColors[task.type]} text-[9px] uppercase font-bold tracking-widest`}>
                       {task.type.replace('_', ' ')}
                     </Badge>
-                    <Badge variant="outline" className={`${priorityColors[task.priority]} text-[9px] uppercase font-bold tracking-widest border-transparent`}>
+                    <Badge className={`${priorityColors[task.priority]} text-[9px] uppercase font-bold tracking-widest border-transparent`}>
                       {task.priority}
                     </Badge>
                   </div>

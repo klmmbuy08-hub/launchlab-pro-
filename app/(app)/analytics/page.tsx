@@ -104,7 +104,7 @@ export default function AnalyticsPage() {
         <div className="flex gap-3">
           <ExportMenu onExport={handleExport} loading={exporting} />
           <Button
-            variant="outline"
+           
             size="sm"
             onClick={() => setScheduleOpen(true)}
             className="border-neutral-700"
@@ -241,7 +241,7 @@ export default function AnalyticsPage() {
                   Schedule
                 </Button>
                 <Button
-                  variant="outline"
+                 
                   className="flex-1"
                   onClick={() => setScheduleOpen(false)}
                 >

@@ -15,7 +15,7 @@ export default function AudiencePage() {
           <p className="text-[#6B7280] mt-1">AI-powered analysis of your business community.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm" className="hidden md:flex">Export Data</Button>
+          <Button size="sm" className="hidden md:flex">Export Data</Button>
           <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white border-0">Refresh Sync</Button>
         </div>
       </div>

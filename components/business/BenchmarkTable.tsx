@@ -102,7 +102,7 @@ export function BenchmarkTable({ userAccount, competitors }: BenchmarkTableProps
                     {item.isUser ? (
                       <Badge className="bg-red-600 text-white font-black uppercase text-[9px] px-3">Main Account</Badge>
                     ) : (
-                      <Badge variant="outline" className="border-neutral-700 text-neutral-500 font-bold uppercase text-[9px] px-3">Tracking</Badge>
+                      <Badge className="border-neutral-700 text-neutral-500 font-bold uppercase text-[9px] px-3">Tracking</Badge>
                     )}
                   </td>
                 </tr>

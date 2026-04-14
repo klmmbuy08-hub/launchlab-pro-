@@ -69,7 +69,7 @@ export function ActionPlan({ recommendations }: ActionPlanProps) {
                       {rec.action_label && (
                         <Button
                           size="sm"
-                          variant="outline"
+                         
                           className="border-neutral-700"
                         >
                           {rec.action_label}

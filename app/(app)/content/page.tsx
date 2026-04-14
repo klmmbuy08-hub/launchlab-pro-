@@ -147,8 +147,8 @@ export default function ContentPage() {
                       </div>
                     )}
                     <div className="flex gap-2 pt-2">
-                      <Button size="sm" variant="outline" className="flex-1">Edit</Button>
-                      <Button size="sm" variant="outline" className="flex-1">View</Button>
+                      <Button size="sm" className="flex-1">Edit</Button>
+                      <Button size="sm" className="flex-1">View</Button>
                     </div>
                   </CardContent>
                 </Card>

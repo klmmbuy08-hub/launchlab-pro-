@@ -3,10 +3,11 @@ import { supabase } from '@/lib/supabase/server'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const body = await request.json()
+    const { id } = await params
 
     // Actualizar debate como resuelto
     const { data, error } = await supabase
@@ -15,7 +16,7 @@ export async function POST(
         user_decision: body.custom_decision || `Siguió a ${body.selected_agent}`,
         resolved_at: new Date().toISOString(),
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single()
 

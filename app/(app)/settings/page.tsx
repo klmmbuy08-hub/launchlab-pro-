@@ -55,7 +55,7 @@ export default function SettingsPage() {
                 <div className="bg-[#171717] p-3 rounded font-mono text-xs text-[#6B7280] mb-2">
                   sk_live_••••••••••••••••
                 </div>
-                <Button size="sm" variant="outline">Regenerate</Button>
+                <Button size="sm">Regenerate</Button>
               </div>
             </CardContent>
           </Card>
@@ -70,7 +70,7 @@ export default function SettingsPage() {
               {['Instagram', 'LinkedIn', 'Meta Ads', 'Pipedrive'].map((service, i) => (
                 <div key={i} className="flex justify-between items-center p-3 bg-[#1A1A1A] rounded">
                   <p className="text-white">{service}</p>
-                  <Button size="sm" variant="outline">Manage</Button>
+                  <Button size="sm">Manage</Button>
                 </div>
               ))}
             </CardContent>

@@ -18,6 +18,8 @@ import {
   MoreVertical,
   Play,
   Pause,
+  DollarSign,
+  Activity,
 } from 'lucide-react'
 
 interface Campaign {
@@ -95,7 +97,7 @@ export default function AdsPage() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" onClick={fetchAds}>
+          <Button onClick={fetchAds}>
             <RefreshCw className="w-4 h-4 mr-2" />
             Sync Meta
           </Button>
@@ -184,7 +186,7 @@ export default function AdsPage() {
                       <Badge className={campaign.status === 'ACTIVE' ? 'bg-green-500/10 text-green-400' : 'bg-[#1A1A1A] text-[#6B7280]'}>
                         {campaign.status}
                       </Badge>
-                      <Badge variant="outline" className="border-neutral-700 text-[#6B7280]">
+                      <Badge className="bg-neutral-900 border border-neutral-700 text-[#6B7280]">
                         {campaign.objective}
                       </Badge>
                     </div>

@@ -166,7 +166,7 @@ export default function MetricsDashboard({
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ channel, percentage }) => `${channel}: ${percentage}%`}
+                    label={({ name, value }: any) => `${name}: ${value}%`}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="percentage"

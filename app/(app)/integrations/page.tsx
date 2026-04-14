@@ -79,7 +79,7 @@ export default function IntegrationsPage() {
                         </div>
                       </div>
                       <div className="flex items-center justify-between">
-                        <Badge className={statusColors[integration.status]} variant="outline">
+                        <Badge className={statusColors[integration.status]}>
                           {integration.status === 'error' && <AlertCircle className="w-3 h-3 mr-1" />}
                           {integration.status}
                         </Badge>

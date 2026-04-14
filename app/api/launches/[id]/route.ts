@@ -3,10 +3,11 @@ import { getLaunchById, updateLaunch, deleteLaunch } from '@/lib/db/launches'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const launch = await getLaunchById(params.id)
+    const { id } = await params
+    const launch = await getLaunchById(id)
     return NextResponse.json({ success: true, launch })
   } catch (error: any) {
     console.error('Get launch error:', error)
@@ -19,11 +20,12 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const body = await request.json()
-    const launch = await updateLaunch(params.id, body)
+    const { id } = await params
+    const launch = await updateLaunch(id, body)
     return NextResponse.json({ success: true, launch })
   } catch (error: any) {
     console.error('Update launch error:', error)
@@ -36,10 +38,11 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await deleteLaunch(params.id)
+    const { id } = await params
+    await deleteLaunch(id)
     return NextResponse.json({ success: true })
   } catch (error: any) {
     console.error('Delete launch error:', error)
