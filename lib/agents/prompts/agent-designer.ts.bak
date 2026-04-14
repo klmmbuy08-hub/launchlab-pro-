@@ -315,7 +315,7 @@ export function generateDesignerPrompt(task: 'slides' | 'landing' | 'brand', dat
 `
 
   if (task === 'slides') {
-    return \`\${baseContext}
+    return `${baseContext}
 
 ## TAREA: DISEÑAR \${data.numSlides || 20} SLIDES PROFESIONALES
 
@@ -333,7 +333,7 @@ Responde SOLO con el JSON. Sin texto adicional.\`
   }
 
   if (task === 'landing') {
-    return \`\${baseContext}
+    return `${baseContext}
 
 ## TAREA: ESTRUCTURA DE LANDING PAGE
 
@@ -360,7 +360,7 @@ Responde SOLO con el JSON. Sin texto adicional.\`
   }
 
   // Brand
-  return \`\${baseContext}
+  return `${baseContext}
 
 ## TAREA: BRAND KIT COMPLETO
 
